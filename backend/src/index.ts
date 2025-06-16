@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import routes from "./routes/index";
 import db from "./utils/database";
@@ -14,6 +15,20 @@ const init = async () => {
 
 		app.use(bodyParser.json());
 		app.use(routes);
+		app.use(
+			cors({
+				origin: (origin, callback) => {
+					const pattern = /^https:\/\/ticketing-app-backend-[\w]+-ardhika-putras-projects\.vercel\.app$/;
+
+					if (!origin || pattern.test(origin)) {
+						callback(null, true);
+					} else {
+						callback(new Error("Not allowed by CORS"));
+					}
+				},
+				credentials: true
+			})
+		);
 
 		const PORT = process.env.PORT || 8765;
 		const time = new Intl.DateTimeFormat("en-US", {
