@@ -13,8 +13,6 @@ const init = async () => {
 
 		const app = express();
 
-		app.use(bodyParser.json());
-		app.use(routes);
 		app.use(
 			cors({
 				origin: (origin, callback) => {
@@ -29,6 +27,8 @@ const init = async () => {
 				credentials: true
 			})
 		);
+		app.use(bodyParser.json());
+		app.use(routes);
 
 		const PORT = process.env.PORT || 8765;
 		const time = new Intl.DateTimeFormat("en-US", {
