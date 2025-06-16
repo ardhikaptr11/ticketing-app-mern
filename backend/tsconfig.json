@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        /* Modules */
+        "module": "commonjs",
+        /* Interop constraints */
+        "esModuleInterop": true
+    }
+}
