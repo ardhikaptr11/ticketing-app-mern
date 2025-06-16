@@ -35,6 +35,9 @@ const validateRegisterSchema = object({
 });
 
 export const register = async (req: Request, res: Response) => {
+	/**
+	 * #swagger.tags = ["Authentication"]
+	 */
 	const { fullName, username, email, password, confirmPassword } = req.body as unknown as TRegister;
 
 	try {
@@ -69,6 +72,13 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
+	/**
+	  #swagger.tags = ["Authentication"]
+      #swagger.requestBody = {
+	     required: true,
+	     schema: {$ref: "#/components/schemas/LoginRequest"}
+	  }
+	*/
 	const { identifier, password } = req.body as unknown as TLogin;
 
 	try {
@@ -122,9 +132,13 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: IReqUser, res: Response) => {
-	try {
-		const user = req.user;
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.security = [{ bearerAuth: [] }]
+	 */
+	const user = req.user;
 
+	try {
 		const result = await UserModel.findById(user?.id);
 
 		res.status(200).json({
