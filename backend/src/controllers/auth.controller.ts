@@ -36,7 +36,11 @@ const validateRegisterSchema = object({
 
 export const register = async (req: Request, res: Response) => {
 	/**
-	 * #swagger.tags = ["Authentication"]
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+	    required: true,
+	    schema: {$ref: "#components/schemas/RegisterRequest"}
+	  }
 	 */
 	const { fullName, username, email, password, confirmPassword } = req.body as unknown as TRegister;
 
@@ -90,7 +94,8 @@ export const login = async (req: Request, res: Response) => {
 				{
 					email: identifier
 				}
-			]
+			],
+			isActive: true
 		});
 
 		if (!userByIdentifier) {
@@ -144,6 +149,44 @@ export const me = async (req: IReqUser, res: Response) => {
 		res.status(200).json({
 			code: 200,
 			message: "Succes get user profile",
+			data: result
+		});
+	} catch (error) {
+		const err = error as unknown as Error;
+
+		res.status(400).json({
+			code: 400,
+			message: err.message,
+			data: null
+		});
+	}
+};
+
+export const activation = async (req: Request, res: Response) => {
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+	    required: true,
+	    schema: {$ref: "#components/schemas/ActivationRequest"}
+	  }
+	 */
+	try {
+		const { code } = req.body as { code: string };
+		const result = await UserModel.findOneAndUpdate(
+			{
+				activationCode: code
+			},
+			{
+				isActive: true
+			},
+			{
+				new: true
+			}
+		);
+
+		res.status(200).json({
+			code: 200,
+			message: "User successfully activated",
 			data: result
 		});
 	} catch (error) {
