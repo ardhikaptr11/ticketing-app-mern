@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { encrypt } from "../utils/encryption";
+import { sendMail, renderMailHtml, verifyEmailConfig } from "../utils/mail/mail";
+import { CLIENT_HOST, EMAIL_SMTP_USER } from "../utils/env";
 
 export interface User {
 	fullName: string;
@@ -10,6 +12,7 @@ export interface User {
 	profilePicture: string;
 	isActive: boolean;
 	activationCode: string;
+	createdAt?: string;
 }
 
 const Schema = mongoose.Schema;
@@ -22,7 +25,8 @@ const UserSchema = new Schema<User>(
 		},
 		username: {
 			type: Schema.Types.String,
-			required: true
+			required: true,
+			unique: true
 		},
 		email: {
 			type: Schema.Types.String,
@@ -59,7 +63,46 @@ UserSchema.pre("save", function (next) {
 	const user = this;
 
 	user.password = encrypt(user.password);
+	user.activationCode = encrypt(user.id);
+
 	next();
+});
+
+UserSchema.post("save", async function (doc, next) {
+	const user = doc;
+
+	try {
+		console.log("Send email to:", user.email);
+
+		const formattedDate = new Intl.DateTimeFormat("en-US", {
+			dateStyle: "medium",
+			timeStyle: "long",
+			hourCycle: "h24",
+			timeZone: "Asia/Jakarta"
+		}).format(new Date());
+
+		const contentMail = await renderMailHtml("registration-success.ejs", {
+			username: user.username,
+			fullName: user.fullName,
+			email: user.email,
+			createdAt: formattedDate,
+			activationLink: `${CLIENT_HOST}/auth/activation?code=${user.activationCode}`
+		});
+
+		console.log("Checking email configuration...");
+		await verifyEmailConfig();
+
+		await sendMail({
+			from: EMAIL_SMTP_USER,
+			to: user.email,
+			subject: "[Action Needed] - User Activation",
+			html: contentMail
+		});
+	} catch (error) {
+		console.error(error);
+	} finally {
+		next();
+	}
 });
 
 UserSchema.methods.toJSON = function () {

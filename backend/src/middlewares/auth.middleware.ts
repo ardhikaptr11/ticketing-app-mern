@@ -6,7 +6,7 @@ export interface IReqUser extends Request {
 }
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-	const authHeader = req.headers.authorization;
+	const authHeader = req.get("Authorization");
 
 	if (!authHeader) {
 		return res.status(401).json({
