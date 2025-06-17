@@ -45,27 +45,16 @@
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "fullName": {
-                    "example": "any"
-                  },
-                  "username": {
-                    "example": "any"
-                  },
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "confirmPassword": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#components/schemas/RegisterRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/RegisterRequest"
               }
             }
           }
@@ -135,6 +124,34 @@
           }
         ]
       }
+    },
+    "/auth/activation": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "",
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/ActivationRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/ActivationRequest"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -146,6 +163,34 @@
       }
     },
     "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "username": {
+            "type": "string",
+            "example": "johndoe123"
+          },
+          "password": {
+            "type": "string",
+            "example": "John123!"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": "John123!"
+          }
+        },
+        "xml": {
+          "name": "RegisterRequest"
+        }
+      },
       "LoginRequest": {
         "type": "object",
         "properties": {
@@ -160,6 +205,18 @@
         },
         "xml": {
           "name": "LoginRequest"
+        }
+      },
+      "ActivationRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "abcdefghij"
+          }
+        },
+        "xml": {
+          "name": "ActivationRequest"
         }
       }
     }
