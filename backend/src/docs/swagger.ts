@@ -40,9 +40,19 @@ const doc = {
 			}
 		},
 		schemas: {
+			RegisterRequest: {
+				fullName: "John Doe",
+				email: "john.doe@example.com",
+				username: "johndoe123",
+				password: "John123!",
+				confirmPassword: "John123!"
+			},
 			LoginRequest: {
 				identifier: "johndoe123",
 				password: "John123!"
+			},
+			ActivationRequest: {
+				code: "abcdefghij"
 			}
 		}
 	}
