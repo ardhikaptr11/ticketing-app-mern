@@ -14,20 +14,22 @@ const init = async () => {
 
 		const app = express();
 
-		app.use(
-			cors({
-				origin: (origin, callback) => {
-					const pattern = /^https:\/\/ticketing-app-backend-[\w]+-ardhika-putras-projects\.vercel\.app$/;
+		app.use(cors());
+		
+		// app.use(
+		// 	cors({
+		// 		origin: (origin, callback) => {
+		// 			const pattern = /^https:\/\/ticketing-app-backend-[\w]+-ardhika-putras-projects\.vercel\.app$/;
 
-					if (!origin || pattern.test(origin) || origin === "http://localhost:8765") {
-						callback(null, true);
-					} else {
-						callback(new Error("Not allowed by CORS"));
-					}
-				},
-				credentials: true
-			})
-		);
+		// 			if (!origin || pattern.test(origin) || origin === "http://localhost:8765") {
+		// 				callback(null, true);
+		// 			} else {
+		// 				callback(new Error("Not allowed by CORS"));
+		// 			}
+		// 		},
+		// 		credentials: true
+		// 	})
+		// );
 		app.use(bodyParser.json());
 		app.use(routes);
 		swaggerDocs(app);
