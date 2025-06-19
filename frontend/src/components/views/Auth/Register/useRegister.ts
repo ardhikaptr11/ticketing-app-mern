@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import type { IRegister } from "@/types/Auth.d.ts";
+import { IRegister } from "@/types/Auth";
 import authServices from "@/services/auth.service";
 
 const registerSchema = yup.object().shape({
@@ -48,6 +48,13 @@ const useRegister = () => {
         setError,
     } = useForm<IRegister>({
         resolver: yupResolver(registerSchema),
+        defaultValues: {
+            fullName: "",
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+        },
     });
 
     const registerService = async (payload: IRegister) => {
