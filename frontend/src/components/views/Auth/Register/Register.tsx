@@ -42,7 +42,7 @@ const Register = () => {
                         Have an account?&nbsp;
                         <Link
                             href="/auth/login"
-                            className="text-sm font-semibold text-danger-400"
+                            className="text-sm font-semibold text-danger-400 hover:underline"
                         >
                             Login here
                         </Link>
