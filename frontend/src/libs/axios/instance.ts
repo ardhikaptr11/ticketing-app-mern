@@ -1,7 +1,6 @@
-import { getSession } from "next-auth/react";
+import { Session, getSession } from "next-auth/react";
 import environment from "../config/environment";
 import axios from "axios";
-import { Session } from "next-auth";
 
 interface CustomSession extends Session {
 	accessToken?: string;
@@ -10,6 +9,7 @@ interface CustomSession extends Session {
 const headers = {
 	"Content-Type": "application/json"
 };
+
 
 const instance = axios.create({
 	baseURL: environment.API_URL,
