@@ -3,7 +3,7 @@ import { Card, CardBody, Link, Input, Button, Spinner } from "@heroui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
 
-import useRegister from "./useRegister";
+import useRegister from "../Register/useRegister";
 
 const Register = () => {
     const {
@@ -35,14 +35,14 @@ const Register = () => {
             </div>
             <Card>
                 <CardBody className="p-8">
-                    <h2 className="text-xl font-bold text-danger-500">
+                    <h2 className="text-2xl font-bold text-danger-500">
                         Create Account
                     </h2>
-                    <p className="mb-4 text-sm">
+                    <p className="mb-4 mt-2 text-sm">
                         Have an account?&nbsp;
                         <Link
                             href="/auth/login"
-                            className="font-semibold text-danger-400"
+                            className="text-sm font-semibold text-danger-400"
                         >
                             Login here
                         </Link>
@@ -187,7 +187,7 @@ const Register = () => {
                                 <Spinner
                                     color="white"
                                     size="sm"
-                                    variant="gradient"
+                                    variant="dots"
                                 />
                             ) : (
                                 "Register"
