@@ -10,12 +10,12 @@ const AuthLayout = (props: PropTypes) => {
     const { children, title } = props;
 
     return (
-        <>
+        <div className="flex min-h-screen min-w-full flex-col items-center justify-center gap-10 py-10 lg:py-0">
             <PageHead title={title} />
-            <section className="max-w-screen-3xl p-0 3xl:container lg:p-6">
+            <section className="max-w-screen-3xl 3xl:container p-0 lg:p-6">
                 {children}
             </section>
-        </>
+        </div>
     );
 };
 
