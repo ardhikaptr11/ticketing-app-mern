@@ -1,9 +1,11 @@
 import express from "express";
-import authRouter from "./api";
+import authRouter from "./auth.router";
+import mediaRouter from "./media.router";
+import categoryRouter from "./category.router";
 
 const router = express.Router();
 
-const routes = [authRouter];
+const routes = [authRouter, mediaRouter, categoryRouter];
 
 routes.forEach((route) => {
 	router.use("/api", route);
