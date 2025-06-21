@@ -4,7 +4,8 @@ import { string, object, ref } from "yup";
 import { UserModel } from "../models/user.model";
 import { encrypt } from "../utils/encryption";
 import { generateToken } from "../utils/jwt";
-import { IReqUser } from "../middlewares/auth.middleware";
+import { IReqUser } from "../utils/interface";
+import response from "../utils/response";
 
 type TRegister = {
 	fullName: string;
@@ -34,7 +35,7 @@ const validateRegisterSchema = object({
 		.required("Confirmation password is required")
 });
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
 	/**
 	  #swagger.tags = ["Authentication"]
 	  #swagger.requestBody = {
@@ -42,9 +43,8 @@ export const register = async (req: Request, res: Response) => {
 	    schema: {$ref: "#components/schemas/RegisterRequest"}
 	  }
 	 */
-	const { fullName, username, email, password, confirmPassword } = req.body as unknown as TRegister;
-
 	try {
+		const { fullName, username, email, password, confirmPassword } = req.body as unknown as TRegister;
 		await validateRegisterSchema.validate({
 			fullName,
 			username,
@@ -60,22 +60,14 @@ export const register = async (req: Request, res: Response) => {
 			password
 		});
 
-		return res.status(200).json({
-			status: "success",
-			message: "User registered successfully!",
-			data: result
-		});
-	} catch (error) {
-		const err = error as unknown as Error;
-		return res.status(400).json({
-			status: "error",
-			message: err.message,
-			data: null
-		});
+		return response.success(res, result, "Registration success");
+	} catch (error: any) {
+		error.message = "Registration failed";
+		next(error)
 	}
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
 	/**
 	  #swagger.tags = ["Authentication"]
       #swagger.requestBody = {
@@ -83,9 +75,8 @@ export const login = async (req: Request, res: Response) => {
 	     schema: {$ref: "#/components/schemas/LoginRequest"}
 	  }
 	*/
-	const { identifier, password } = req.body as unknown as TLogin;
-
 	try {
+		const { identifier, password } = req.body as unknown as TLogin;
 		const userByIdentifier = await UserModel.findOne({
 			$or: [
 				{
@@ -99,70 +90,42 @@ export const login = async (req: Request, res: Response) => {
 		});
 
 		if (!userByIdentifier) {
-			return res.status(404).json({
-				code: 404,
-				message: "User not found",
-				data: null
-			});
+			return response.error(res, { message: "User not found", status: 404 });
 		}
 
 		const isPasswordValid: boolean = encrypt(password) === userByIdentifier.password;
 
-		if (!isPasswordValid) {
-			return res.status(401).json({
-				code: 401,
-				message: "Invalid password",
-				data: null
-			});
-		}
+		if (!isPasswordValid) return response.authError(res, 401, "Invalid password");
 
 		const token = generateToken({
 			id: userByIdentifier._id,
 			role: userByIdentifier.role
 		});
 
-		res.status(200).json({
-			code: 200,
-			message: "Login success!",
-			data: token
-		});
-	} catch (error) {
-		const err = error as unknown as Error;
-		return res.status(400).json({
-			code: 400,
-			message: err.message,
-			data: null
-		});
+		response.success(res, token, "Login success");
+	} catch (error: any) {
+		error.message = "Login failed";
+		next(error);
 	}
 };
 
-export const me = async (req: IReqUser, res: Response) => {
+export const me = async (req: IReqUser, res: Response, next: NextFunction) => {
 	/**
 	  #swagger.tags = ["Authentication"]
 	  #swagger.security = [{ bearerAuth: [] }]
 	 */
-	const user = req.user;
-
 	try {
+		const user = req.user;
 		const result = await UserModel.findById(user?.id);
 
-		res.status(200).json({
-			code: 200,
-			message: "Succes get user profile",
-			data: result
-		});
-	} catch (error) {
-		const err = error as unknown as Error;
-
-		res.status(400).json({
-			code: 400,
-			message: err.message,
-			data: null
-		});
+		response.success(res, result, "Success get user profile");
+	} catch (error: any) {
+		error.message = "Failed to get user profile";
+		next(error);
 	}
 };
 
-export const activation = async (req: Request, res: Response) => {
+export const activation = async (req: Request, res: Response, next: NextFunction) => {
 	/**
 	  #swagger.tags = ["Authentication"]
 	  #swagger.requestBody = {
@@ -184,18 +147,9 @@ export const activation = async (req: Request, res: Response) => {
 			}
 		);
 
-		res.status(200).json({
-			code: 200,
-			message: "User successfully activated",
-			data: result
-		});
-	} catch (error) {
-		const err = error as unknown as Error;
-
-		res.status(400).json({
-			code: 400,
-			message: err.message,
-			data: null
-		});
+		response.success(res, result, "User successfully activated");
+	} catch (error: any) {
+		error.message = "User activation failed";
+		next(error);
 	}
 };
