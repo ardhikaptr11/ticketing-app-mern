@@ -1,39 +1,25 @@
 import { Request, Response, NextFunction } from "express";
-import { IUserToken, getUserData } from "../utils/jwt";
-
-export interface IReqUser extends Request {
-	user?: IUserToken;
-}
+import { getUserData } from "../utils/jwt";
+import { IReqUser } from "../utils/interface";
+import response from "../utils/response";
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
 	const authHeader = req.get("Authorization");
 
 	if (!authHeader) {
-		return res.status(401).json({
-			code: 401,
-			message: "Authentication token is required",
-			data: null
-		});
+		return response.authError(res, 401, "Authentication token is required");
 	}
 
-	const [prefix, token] = authHeader.split(" ");
+	const [prefix, token] = authHeader.trim().split(" ");
 
 	if ((prefix !== "Bearer" && token) || authHeader.split(" ").length > 2) {
-		return res.status(401).json({
-			code: 401,
-			message: "Invalid token",
-			data: null
-		});
+		return response.authError(res, 401, "Invalid token");
 	}
 
 	const user = getUserData(token);
 
 	if (!user) {
-		return res.status(404).json({
-			code: 404,
-			message: "Invalid token",
-			data: null
-		});
+		return response.authError(res, 401, "Invalid token");
 	}
 
 	(req as IReqUser).user = user;
