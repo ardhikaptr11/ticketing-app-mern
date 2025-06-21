@@ -5,6 +5,7 @@ import cors from "cors";
 import routes from "./routes/index";
 import db from "./utils/database";
 import { swaggerDocs } from "./docs/route";
+import { globalError } from "./middlewares/error.middleware";
 
 const init = async () => {
 	try {
@@ -15,7 +16,7 @@ const init = async () => {
 		const app = express();
 
 		app.use(cors());
-		
+
 		// app.use(
 		// 	cors({
 		// 		origin: (origin, callback) => {
@@ -30,8 +31,12 @@ const init = async () => {
 		// 		credentials: true
 		// 	})
 		// );
+
 		app.use(bodyParser.json());
 		app.use(routes);
+
+		app.use(globalError);
+
 		swaggerDocs(app);
 
 		const PORT = process.env.PORT || 8765;
