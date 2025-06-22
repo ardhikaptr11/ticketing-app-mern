@@ -6,10 +6,44 @@ import { ROLES } from "../utils/constant";
 
 const router = express.Router();
 
-router.post("/auth/register", register);
-router.post("/auth/login", login);
-router.get("/auth/me", authenticate, me);
-router.post("/auth/activation", activation);
+router.post(
+	"/auth/register",
+	register
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+	    required: true,
+	    schema: {$ref: "#components/schemas/RegisterRequest"}
+	  }
+	 */
+);
+router.post("/auth/login", login
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+		 required: true,
+		 schema: {$ref: "#/components/schemas/LoginRequest"}
+	  }
+	*/
+);
+router.get(
+	"/auth/me",
+	authenticate,
+	me
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.security = [{ bearerAuth: [] }]
+	 */
+);
+router.post("/auth/activation", activation
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+		required: true,
+		schema: {$ref: "#components/schemas/ActivationRequest"}
+	  }
+	 */
+);
 
 router.get("/test-acl", [authenticate, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER])], (req: Request, res: Response) => {
 	res.status(200).json({
