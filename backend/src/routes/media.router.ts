@@ -12,7 +12,8 @@ const router = express.Router();
 
 router.post(
 	"/media/upload-single",
-	[authenticate, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER]), mediaMiddleware.single("image"), checkUploadError]
+	[authenticate, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER]), mediaMiddleware.single("image"), checkUploadError],
+	uploadSingleFile
 	/**
 	  #swagger.tags = ["Media"]
 	  #swagger.security = [{
