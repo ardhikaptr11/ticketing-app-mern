@@ -36,13 +36,6 @@ const validateRegisterSchema = object({
 });
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-	/**
-	  #swagger.tags = ["Authentication"]
-	  #swagger.requestBody = {
-	    required: true,
-	    schema: {$ref: "#components/schemas/RegisterRequest"}
-	  }
-	 */
 	try {
 		const { fullName, username, email, password, confirmPassword } = req.body as unknown as TRegister;
 		await validateRegisterSchema.validate({
@@ -68,13 +61,6 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-	/**
-	  #swagger.tags = ["Authentication"]
-      #swagger.requestBody = {
-	     required: true,
-	     schema: {$ref: "#/components/schemas/LoginRequest"}
-	  }
-	*/
 	try {
 		const { identifier, password } = req.body as unknown as TLogin;
 		const userByIdentifier = await UserModel.findOne({
@@ -110,10 +96,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const me = async (req: IReqUser, res: Response, next: NextFunction) => {
-	/**
-	  #swagger.tags = ["Authentication"]
-	  #swagger.security = [{ bearerAuth: [] }]
-	 */
 	try {
 		const user = req.user;
 		const result = await UserModel.findById(user?.id);
@@ -126,13 +108,6 @@ export const me = async (req: IReqUser, res: Response, next: NextFunction) => {
 };
 
 export const activation = async (req: Request, res: Response, next: NextFunction) => {
-	/**
-	  #swagger.tags = ["Authentication"]
-	  #swagger.requestBody = {
-	    required: true,
-	    schema: {$ref: "#components/schemas/ActivationRequest"}
-	  }
-	 */
 	try {
 		const { code } = req.body as { code: string };
 		const result = await UserModel.findOneAndUpdate(
