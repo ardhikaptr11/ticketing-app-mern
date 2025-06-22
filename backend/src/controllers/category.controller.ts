@@ -6,7 +6,6 @@ import response from "../utils/response";
 export const create = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		await categoryDAO.validate(req.body);
-
 		const result = await CategoryModel.create(req.body);
 		response.success(res, result, "Category successfully created");
 	} catch (error: any) {
@@ -16,9 +15,8 @@ export const create = async (req: IReqUser, res: Response, next: NextFunction) =
 };
 
 export const findAll = async (req: IReqUser, res: Response, next: NextFunction) => {
-	const { page = 1, limit = 10, search } = req.query as unknown as IPaginationQuery;
-
 	try {
+		const { page = 1, limit = 10, search } = req.query as unknown as IPaginationQuery;
 		const query = {};
 
 		if (search) {
@@ -50,10 +48,10 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 				totalPages: Math.ceil(count / limit),
 				current: page
 			},
-			"Success find all category"
+			"Success find all categories"
 		);
 	} catch (error: any) {
-		error.message = "Failed to find all category";
+		error.message = "Failed to find all categories";
 		next(error);
 	}
 };
@@ -83,7 +81,7 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 export const remove = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
-		const result = await CategoryModel.findByIdAndDelete(id);
+		const result = await CategoryModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Category successfully removed");
 	} catch (error: any) {
 		error.message = "Failed to remove category";
