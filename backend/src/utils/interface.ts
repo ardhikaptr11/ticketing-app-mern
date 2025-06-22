@@ -1,6 +1,9 @@
 import { Request } from "express";
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { MulterError } from "multer";
+import * as Yup from "yup";
+
+import { eventDAO } from "../models/event.model";
 
 export interface CustomMulterError extends Omit<MulterError, "code"> {
 	code: MulterError["code"] | "MISSING_FIELD_NAME";
@@ -35,4 +38,9 @@ export interface IPaginationQuery {
 	page: number;
 	limit: number;
 	search?: number;
+}
+
+export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
+	category: ObjectId
+	createdBy: ObjectId;
 }
