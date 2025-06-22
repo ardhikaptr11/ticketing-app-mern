@@ -4,6 +4,7 @@ import { MulterError } from "multer";
 
 import { ValidationError } from "yup";
 import { CustomMulterError } from "./interface";
+import mongoose from "mongoose";
 
 type TPagination = {
 	totalPages: number;
@@ -32,13 +33,15 @@ export default {
 					status,
 					message
 				},
-				data: error.errors[0]
+				data: {
+					[`${error.path}`]: error.errors[0]
+				}
 			});
 		}
 
 		if (error instanceof MulterError) {
-            const status = (error as CustomMulterError).status
-            
+			const status = (error as CustomMulterError).status;
+
 			return res.status(status).json({
 				meta: {
 					status,
@@ -48,12 +51,33 @@ export default {
 			});
 		}
 
+		if (error instanceof mongoose.Error) {
+			return res.status(status).json({
+				meta: {
+					status,
+					message: error.message
+				},
+				data: error.name
+			});
+		}
+
+		if ((error as any)?.code) {
+			const _err = error as any;
+			return res.status(status).json({
+				meta: {
+					status,
+					message: _err.errorResponse.errmsg
+				},
+				data: _err
+			});
+		}
+
 		res.status(status).json({
 			meta: {
 				status,
 				message
 			},
-			data: null
+			data: error
 		});
 	},
 	authError(res: Response, statusCode: number, message: string = "Unauthorized") {
