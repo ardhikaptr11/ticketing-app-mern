@@ -1,4 +1,4 @@
-import { LIMIT_LISTS } from "@/constants/list.contants";
+import { LIMIT_LISTS } from "@/constants/list.constants";
 import {
     Button,
     Input,
@@ -15,7 +15,7 @@ import {
 } from "@heroui/react";
 import { ChangeEvent, Key, ReactNode, useMemo } from "react";
 import { CiSearch } from "react-icons/ci";
-import { cn } from "../../../../utils/cn";
+import { cn } from "../../../utils/cn";
 
 interface PropTypes {
     buttonTopContentLabel?: string;
@@ -80,7 +80,7 @@ const DataTable = (props: PropTypes) => {
 
     const BottomContent = useMemo(
         () => (
-            <div className="flex items-center justify-center px-2 py-2 lg:justify-between">
+            <div className="flex items-center justify-center lg:justify-between">
                 <Select
                     className="hidden max-w-36 lg:block"
                     size="md"
@@ -88,21 +88,23 @@ const DataTable = (props: PropTypes) => {
                     selectionMode="single"
                     onChange={onLimitChange}
                     startContent={<p className="text-small">Show:</p>}
+                    disallowEmptySelection
                 >
                     {LIMIT_LISTS.map((item) => (
-                        <SelectItem key={item.value} textValue={item.label}>
-                            {item.label}
-                        </SelectItem>
+                        <SelectItem key={item.value}>{item.label}</SelectItem>
                     ))}
                 </Select>
-                <Pagination
-                    isCompact
-                    showControls
-                    color="danger"
-                    page={currentPage}
-                    total={totalPages}
-                    onChange={onPageChange}
-                />
+                {totalPages > 1 && (
+                    <Pagination
+                        isCompact
+                        showControls
+                        color="danger"
+                        page={currentPage}
+                        total={totalPages}
+                        onChange={onPageChange}
+                        loop
+                    />
+                )}
             </div>
         ),
         [limit, currentPage, totalPages, onPageChange, onLimitChange],
@@ -132,7 +134,12 @@ const DataTable = (props: PropTypes) => {
                 isLoading={isLoading}
                 loadingContent={
                     <div className="flex h-full w-full items-center justify-center bg-foreground-700/30 backdrop-blur-sm">
-                        <Spinner color="danger" variant="wave" />
+                        <Spinner
+                            color="danger"
+                            label="Loading"
+                            variant="wave"
+                            classNames={{ label: "text-default-500" }}
+                        />
                     </div>
                 }
             >
