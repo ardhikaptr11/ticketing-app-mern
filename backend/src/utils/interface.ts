@@ -37,7 +37,7 @@ export interface IReqUser extends Request {
 export interface IPaginationQuery {
 	page: number;
 	limit: number;
-	search?: number;
+	search?: string;
 }
 
 export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
