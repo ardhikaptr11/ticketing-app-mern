@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 
 import { IRegister } from "@/types/Auth";
 import authServices from "@/services/auth.service";
+import { ToasterContext } from "@/contexts/ToasterContext";
+import { AxiosError } from "axios";
 
 const registerSchema = yup.object().shape({
     fullName: yup.string().required("Please enter your full name"),
@@ -40,6 +42,8 @@ const useRegister = () => {
         });
     };
 
+    const { setToaster } = useContext(ToasterContext);
+
     const {
         control,
         handleSubmit,
@@ -66,14 +70,29 @@ const useRegister = () => {
     const { mutate: mutateRegister, isPending: isPendingRegister } =
         useMutation({
             mutationFn: registerService,
-            onError(error) {
-                setError("root", {
-                    message: error.message,
+            onError: (error: AxiosError) => {
+                const meta = (
+                    error.response?.data as {
+                        meta: { status: number; message: string };
+                    }
+                ).meta;
+
+                const errorMessage = meta.message.includes("E11000")
+                    ? "User is already registered"
+                    : "Registration failed";
+
+                setToaster({
+                    type: "error",
+                    message: errorMessage,
                 });
             },
             onSuccess: () => {
-                router.push("/auth/register/success");
                 reset();
+                setToaster({
+                    type: "success",
+                    message: "Registration success!",
+                });
+                router.push("/auth/register/success");
             },
         });
 
