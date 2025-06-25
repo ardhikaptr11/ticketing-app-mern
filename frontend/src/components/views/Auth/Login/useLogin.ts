@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 
 import { ILogin } from "@/types/Auth";
+import { ToasterContext } from "@/contexts/ToasterContext";
 
 const loginSchema = yup.object().shape({
     identifier: yup
@@ -32,12 +33,13 @@ const loginSchema = yup.object().shape({
         .required("Please enter your password"),
 });
 
-const useRegister = () => {
+const useLogin = () => {
     const router = useRouter();
 
     const [isVisible, setIsVisible] = useState(false);
 
     const handleVisiblePassword = () => setIsVisible(!isVisible);
+    const { setToaster } = useContext(ToasterContext);
 
     const callbackUrl: string = (router.query.callbackUrl as string) || "/";
 
@@ -71,14 +73,19 @@ const useRegister = () => {
 
     const { mutate: mutateLogin, isPending: isPendingLogin } = useMutation({
         mutationFn: loginService,
-        onError(error) {
-            setError("root", {
-                message: error.message,
+        onError: () => {
+            setToaster({
+                type: "error",
+                message: "Invalid login credentials",
             });
         },
         onSuccess: () => {
-            router.push(callbackUrl);
             reset();
+            setToaster({
+                type: "success",
+                message: "Login success!",
+            });
+            router.push(callbackUrl);
         },
     });
 
@@ -95,4 +102,4 @@ const useRegister = () => {
     };
 };
 
-export default useRegister;
+export default useLogin;
