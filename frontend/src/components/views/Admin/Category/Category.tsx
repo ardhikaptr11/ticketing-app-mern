@@ -5,6 +5,7 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    useDisclosure,
 } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -13,7 +14,8 @@ import { IoTrashOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { COLUMN_LIST_CATEGORY } from "./Category.constants";
 import { useCategory } from "./useCategory";
 import { SlOptionsVertical } from "react-icons/sl";
-import InputFile from "@/components/ui/InputFile";
+import AddCategoryModal from "./AddCategoryModal";
+import DeleteCategoryModal from "./DeleteCategoryModal";
 
 const Category = () => {
     const { push, isReady, query } = useRouter();
@@ -27,8 +29,14 @@ const Category = () => {
         handleClearSearch,
         isLoadingCategory,
         isRefetchingCategory,
+        refetchCategory,
+        selectedId,
+        setSelectedId,
         setURL,
     } = useCategory();
+
+    const addCategoryModal = useDisclosure();
+    const deleteCategoryModal = useDisclosure();
 
     useEffect(() => {
         if (isReady) {
@@ -41,15 +49,15 @@ const Category = () => {
             const cellValue = category[columnKey as keyof typeof category];
 
             switch (columnKey) {
-                // case "icon":
-                //     return (
-                //         <Image
-                //             src={cellValue as string}
-                //             alt="Category Icon"
-                //             width={100}
-                //             height={200}
-                //         />
-                //     );
+                case "icon":
+                    return (
+                        <Image
+                            src={cellValue as string}
+                            alt="Category Icon"
+                            width={100}
+                            height={200}
+                        />
+                    );
                 case "actions":
                     return (
                         <Dropdown>
@@ -74,6 +82,10 @@ const Category = () => {
                                     key="delete-category-button"
                                     className="text-red-500"
                                     startContent={<IoTrashOutline />}
+                                    onPress={() => {
+                                        setSelectedId(`${category._id}`);
+                                        deleteCategoryModal.onOpen();
+                                    }}
                                 >
                                     Delete
                                 </DropdownItem>
@@ -98,7 +110,7 @@ const Category = () => {
                     emptyContent="Category is empty"
                     isLoading={isLoadingCategory || isRefetchingCategory}
                     limit={String(currentLimit)}
-                    onClickButtonTopContent={() => {}}
+                    onClickButtonTopContent={addCategoryModal.onOpen}
                     onClearSearch={handleClearSearch}
                     onPageChange={handleChangePage}
                     onSearchChange={handleSearch}
@@ -107,7 +119,16 @@ const Category = () => {
                     totalPages={dataCategory?.pagination.totalPages}
                 />
             )}
-            <InputFile name="input" isDropable/>
+            <AddCategoryModal
+                refetchCategory={refetchCategory}
+                {...addCategoryModal}
+            />
+            <DeleteCategoryModal
+                refetchCategory={refetchCategory}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+                {...deleteCategoryModal}
+            />
         </section>
     );
 };
