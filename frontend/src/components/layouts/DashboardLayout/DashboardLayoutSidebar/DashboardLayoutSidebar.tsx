@@ -1,8 +1,9 @@
+import SafeLink from "@/components/commons/SafeLink";
 import cn from "@/utils/cn";
 import { Button, Listbox, ListboxItem } from "@heroui/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import { CiLogout } from "react-icons/ci";
@@ -57,9 +58,8 @@ const DashboardLayoutSidebar = (props: PropTypes) => {
                                 "bg-danger-500 text-white":
                                     router.pathname.startsWith(item.href),
                             })}
-                            aria-labelledby={item.label}
-                            aria-describedby={item.label}
-                            as={Link}
+                            aria-label="Sidebar Item"
+                            as={SafeLink}
                         >
                             <p className="text-small">{item.label}</p>
                         </ListboxItem>
