@@ -1,11 +1,18 @@
-import { ALLOWED_LIMITS, DELAY, LIMIT_DEFAULT, PAGE_DEFAULT } from "@/constants/list.constants";
-import { useDebounce } from "@/hooks/useDebounce";
-import categoryServices from "@/services/category.service";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+
+import {
+    ALLOWED_LIMITS,
+    DELAY,
+    LIMIT_DEFAULT,
+    PAGE_DEFAULT,
+} from "@/constants/list.constants";
+import { useDebounce } from "@/hooks/useDebounce";
+import categoryServices from "@/services/category.service";
 
 export const useCategory = () => {
+    const [selectedId, setSelectedId] = useState("");
     const { isReady, push, query, replace } = useRouter();
     const debounce = useDebounce();
 
@@ -14,7 +21,6 @@ export const useCategory = () => {
     const currentSearch = query.search;
 
     const setURL = () => {
-
         if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
             replace({
                 query: {
@@ -25,7 +31,7 @@ export const useCategory = () => {
             });
             return;
         }
-        
+
         replace({
             query: {
                 limit: currentLimit || LIMIT_DEFAULT,
@@ -76,8 +82,8 @@ export const useCategory = () => {
                     page: PAGE_DEFAULT,
                 },
             });
-        }, DELAY)
-    }
+        }, DELAY);
+    };
 
     const handleClearSearch = () => {
         push({
@@ -93,6 +99,7 @@ export const useCategory = () => {
         data: dataCategory,
         isLoading: isLoadingCategory,
         isRefetching: isRefetchingCategory,
+        refetch: refetchCategory,
     } = useQuery({
         queryKey: ["Category", currentPage, currentLimit, currentSearch],
         queryFn: () => getCategories(),
@@ -110,6 +117,9 @@ export const useCategory = () => {
         handleClearSearch,
         isLoadingCategory,
         isRefetchingCategory,
+        refetchCategory,
+        selectedId,
+        setSelectedId,
         setURL,
     };
 };
