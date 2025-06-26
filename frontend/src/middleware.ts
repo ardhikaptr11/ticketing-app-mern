@@ -11,11 +11,26 @@ export async function middleware(request: NextRequest) {
 
     const { pathname } = request.nextUrl;
 
+    const possibleAuthRoute = [
+        "/login",
+        "/register",
+        "/auth/login",
+        "/auth/register",
+    ];
+
     // If the user is not authenticated, redirect to the login page
-    if (pathname === "/auth/login" || pathname === "/auth/register") {
+    if (possibleAuthRoute.includes(pathname)) {
         if (token) {
             // If the user is authenticated, redirect to the dashboard
             return NextResponse.redirect(new URL("/", request.url));
+        }
+    }
+
+    if (pathname === "/login" || pathname === "/register") {
+        if (!token) {
+            const target =
+                pathname === "/login" ? "/auth/login" : "/auth/register";
+            return NextResponse.redirect(new URL(target, request.url));
         }
     }
 
@@ -44,6 +59,10 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(loginUrl);
         }
 
+        if (token?.user?.role !== "member") {
+            return NextResponse.redirect(new URL("/admin", request.url));
+        }
+
         if (pathname === "/member") {
             return NextResponse.redirect(
                 new URL("/member/profile", request.url),
@@ -53,5 +72,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/auth/:path*", "/admin/:path*", "/member/:path*"],
+    matcher: [
+        "/login",
+        "/register",
+        "/auth/:path*",
+        "/admin/:path*",
+        "/member/:path*",
+    ],
 };
