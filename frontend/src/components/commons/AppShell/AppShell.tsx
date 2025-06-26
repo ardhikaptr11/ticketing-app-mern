@@ -21,9 +21,9 @@ const AppShell = (props: PropTypes) => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setToaster(defaultToaster);
-        }, 2000);
+        }, 3000); // Clear toaster after 3 seconds
 
-        return () => clearTimeout(timeout)
+        return () => clearTimeout(timeout);
     }, [toaster]);
 
     return (
