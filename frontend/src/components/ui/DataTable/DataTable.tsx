@@ -82,6 +82,7 @@ const DataTable = (props: PropTypes) => {
         () => (
             <div className="flex items-center justify-center lg:justify-between">
                 <Select
+                    aria-label="Rows per page"
                     className="hidden max-w-36 lg:block"
                     size="md"
                     selectedKeys={[limit]}
@@ -112,6 +113,7 @@ const DataTable = (props: PropTypes) => {
 
     return (
         <Table
+            aria-label="Category list table"
             bottomContent={BottomContent}
             bottomContentPlacement="outside"
             classNames={{
