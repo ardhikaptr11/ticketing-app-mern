@@ -35,9 +35,10 @@ const Register = () => {
             <div className="flex w-full flex-col items-center justify-center gap-10 lg:w-1/3">
                 <Image
                     src="/images/general/zentix.png"
-                    alt="Logo"
+                    alt="Zentix logo"
                     width={120}
                     height={120}
+                    priority
                 />
                 <Image
                     src="/images/illustrations/login.svg"
