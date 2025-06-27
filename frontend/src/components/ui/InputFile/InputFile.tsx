@@ -1,19 +1,20 @@
 import { Button, cn, Spinner } from "@heroui/react";
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useId, useRef, useState } from "react";
+import React, { ChangeEvent, ReactNode, useEffect, useId, useRef, useState } from "react";
 import { CiSaveUp2 } from "react-icons/ci";
 import { IoTrashOutline } from "react-icons/io5";
 
 interface PropTypes {
     errorMessage?: string;
     className?: string;
+    isDeleting?: boolean;
     isDropable?: boolean;
     isInvalid?: boolean;
+    isUploading?: boolean;
+    label?: ReactNode;
     name: string;
     onUpload?: (file: FileList) => void;
     onDelete?: () => void;
-    isUploading?: boolean;
-    isDeleting?: boolean;
     preview?: string;
 }
 
@@ -21,10 +22,11 @@ const InputFile = (props: PropTypes) => {
     const {
         errorMessage,
         className,
+        isDeleting,
         isDropable = false,
         isInvalid,
-        isDeleting,
         isUploading,
+        label,
         name,
         onUpload,
         onDelete,
@@ -72,6 +74,7 @@ const InputFile = (props: PropTypes) => {
 
     return (
         <div>
+            {label}
             <label
                 ref={drop}
                 htmlFor={`dropzone-file-${dropzoneId}`}
