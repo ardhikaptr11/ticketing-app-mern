@@ -35,12 +35,13 @@ const DashboardLayoutSidebar = (props: PropTypes) => {
             <div>
                 <div className="flex justify-center">
                     <Image
-                        src="/images/general/zentix.svg"
-                        alt="Zentix Logo"
+                        src="/images/general/zentix.png"
+                        alt="Zentix logo"
                         width={180}
                         height={60}
                         className="mb-6 h-16 w-32 cursor-pointer"
                         onClick={() => router.push("/")}
+                        priority
                     />
                 </div>
                 <Listbox
