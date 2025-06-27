@@ -63,7 +63,7 @@ const AddCategoryModal = (props: PropTypes) => {
                 <ModalContent className="m-4">
                     <ModalHeader>Add Category</ModalHeader>
                     <ModalBody>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-2">
                             <p className="text-sm font-bold">Information</p>
                             <Controller
                                 name="name"
@@ -71,6 +71,7 @@ const AddCategoryModal = (props: PropTypes) => {
                                 render={({ field }) => (
                                     <Input
                                         {...field}
+                                        className="mb-2"
                                         label="Name"
                                         type="text"
                                         variant="bordered"
@@ -87,6 +88,7 @@ const AddCategoryModal = (props: PropTypes) => {
                                 render={({ field }) => (
                                     <Textarea
                                         {...field}
+                                        className="mb-2"
                                         label="Description"
                                         variant="bordered"
                                         isInvalid={
@@ -142,7 +144,7 @@ const AddCategoryModal = (props: PropTypes) => {
                             color="danger"
                             disabled={disabledSubmit}
                         >
-                            {isPendingMutateAddCategory ? (
+                            {disabledSubmit ? (
                                 <Spinner color="white" size="sm" />
                             ) : (
                                 "Add Category"
