@@ -1,45 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
-import {
-    ALLOWED_LIMITS,
-    DELAY,
-    LIMIT_DEFAULT,
-    PAGE_DEFAULT,
-} from "@/constants/list.constants";
-import { useDebounce } from "@/hooks/useDebounce";
 import categoryServices from "@/services/category.service";
+import useChangeURL from "@/hooks/useChangeURL";
 
 export const useCategory = () => {
     const [selectedId, setSelectedId] = useState("");
-    const { isReady, push, query, replace } = useRouter();
-    const debounce = useDebounce();
+    const [selectedIcon, setSelectedIcon] = useState("");
+    const { isReady } = useRouter();
 
-    const currentLimit = query.limit;
-    const currentPage = query.page;
-    const currentSearch = query.search;
-
-    const setURL = () => {
-        if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
-            replace({
-                query: {
-                    limit: LIMIT_DEFAULT,
-                    page: PAGE_DEFAULT,
-                    search: currentSearch || "",
-                },
-            });
-            return;
-        }
-
-        replace({
-            query: {
-                limit: currentLimit || LIMIT_DEFAULT,
-                page: currentPage || PAGE_DEFAULT,
-                search: currentSearch || "",
-            },
-        });
-    };
+    const { currentLimit, currentPage, currentSearch } = useChangeURL();
 
     const getCategories = async () => {
         const params = currentSearch
@@ -52,56 +23,13 @@ export const useCategory = () => {
         return data;
     };
 
-    const handleChangePage = (page: number) => {
-        push({
-            query: {
-                ...query,
-                page,
-            },
-        });
-    };
-
-    const handleChangeLimit = (e: ChangeEvent<HTMLSelectElement>) => {
-        const selectedLimit = e.target.value;
-        push({
-            query: {
-                ...query,
-                limit: selectedLimit,
-                page: PAGE_DEFAULT,
-            },
-        });
-    };
-
-    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        debounce(() => {
-            const searchValue = e.target.value.trim();
-            push({
-                query: {
-                    ...query,
-                    search: searchValue || "",
-                    page: PAGE_DEFAULT,
-                },
-            });
-        }, DELAY);
-    };
-
-    const handleClearSearch = () => {
-        push({
-            query: {
-                ...query,
-                search: "",
-                page: PAGE_DEFAULT,
-            },
-        });
-    };
-
     const {
         data: dataCategory,
         isLoading: isLoadingCategory,
         isRefetching: isRefetchingCategory,
         refetch: refetchCategory,
     } = useQuery({
-        queryKey: ["Category", currentPage, currentLimit, currentSearch],
+        queryKey: ["Categories", currentPage, currentLimit, currentSearch],
         queryFn: () => getCategories(),
         enabled: isReady && !!currentPage && !!currentLimit,
     });
@@ -111,15 +39,12 @@ export const useCategory = () => {
         currentLimit,
         currentSearch,
         dataCategory,
-        handleChangePage,
-        handleChangeLimit,
-        handleSearch,
-        handleClearSearch,
         isLoadingCategory,
         isRefetchingCategory,
         refetchCategory,
         selectedId,
         setSelectedId,
-        setURL,
+        selectedIcon,
+        setSelectedIcon,
     };
 };
