@@ -9,7 +9,7 @@ import {
 } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Key, ReactNode, useCallback, useEffect } from "react";
+import { Key, ReactNode, useCallback } from "react";
 import { IoTrashOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { COLUMN_LIST_CATEGORY } from "./Category.constants";
 import { useCategory } from "./useCategory";
@@ -18,31 +18,20 @@ import AddCategoryModal from "./AddCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 
 const Category = () => {
-    const { push, isReady, query } = useRouter();
+    const { push, query } = useRouter();
     const {
-        currentPage,
-        currentLimit,
         dataCategory,
-        handleChangeLimit,
-        handleChangePage,
-        handleSearch,
-        handleClearSearch,
         isLoadingCategory,
         isRefetchingCategory,
         refetchCategory,
         selectedId,
         setSelectedId,
-        setURL,
+        selectedIcon,
+        setSelectedIcon,
     } = useCategory();
 
     const addCategoryModal = useDisclosure();
     const deleteCategoryModal = useDisclosure();
-
-    useEffect(() => {
-        if (isReady) {
-            setURL();
-        }
-    }, [isReady]);
 
     const renderCell = useCallback(
         (category: Record<string, unknown>, columnKey: Key) => {
@@ -53,7 +42,7 @@ const Category = () => {
                     return (
                         <Image
                             src={cellValue as string}
-                            alt="Category Icon"
+                            alt="Category icon"
                             width={100}
                             height={200}
                         />
@@ -84,6 +73,7 @@ const Category = () => {
                                     startContent={<IoTrashOutline />}
                                     onPress={() => {
                                         setSelectedId(`${category._id}`);
+                                        setSelectedIcon(`${category.icon}`);
                                         deleteCategoryModal.onOpen();
                                     }}
                                 >
@@ -105,16 +95,10 @@ const Category = () => {
                 <DataTable
                     buttonTopContentLabel="Create Category"
                     columns={COLUMN_LIST_CATEGORY}
-                    currentPage={Number(currentPage)}
                     data={dataCategory?.data || []}
                     emptyContent="Category is empty"
                     isLoading={isLoadingCategory || isRefetchingCategory}
-                    limit={String(currentLimit)}
                     onClickButtonTopContent={addCategoryModal.onOpen}
-                    onClearSearch={handleClearSearch}
-                    onPageChange={handleChangePage}
-                    onSearchChange={handleSearch}
-                    onLimitChange={handleChangeLimit}
                     renderCell={renderCell}
                     totalPages={dataCategory?.pagination.totalPages}
                 />
@@ -127,6 +111,8 @@ const Category = () => {
                 refetchCategory={refetchCategory}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
+                selectedIcon={selectedIcon}
+                setSelectedIcon={setSelectedIcon}
                 {...deleteCategoryModal}
             />
         </section>
