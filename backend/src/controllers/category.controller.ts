@@ -21,14 +21,10 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 
 		if (search) {
 			Object.assign(query, {
-				$or: [
-					{
-						name: { $regex: search, $options: "i" }
-					},
-					{
-						description: { $regex: search, $options: "i" }
-					}
-				]
+				...query,
+				$text: {
+					$search: search
+				}
 			});
 		}
 
