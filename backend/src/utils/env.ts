@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+export const NODE_ENV: string = process.env.NODE_ENV || "development";
 export const SECRET: string = process.env.SECRET || "";
 export const CLIENT_HOST: string = process.env.CLIENT_HOST || "http://localhost:8765"
 
