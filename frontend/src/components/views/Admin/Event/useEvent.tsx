@@ -19,8 +19,6 @@ export const useEvent = () => {
         const res = await eventServices.getEvents(params);
         const { data } = res;
 
-        console.log(data)
-
         return data;
     };
 
