@@ -32,4 +32,6 @@ const CategorySchema = new Schema<Category>(
 	}
 );
 
+CategorySchema.index({ name: "text", description: "text" });
+
 export const CategoryModel = mongoose.model("Category", CategorySchema);
