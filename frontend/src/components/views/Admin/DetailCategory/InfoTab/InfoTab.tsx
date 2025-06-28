@@ -10,7 +10,7 @@ import {
 } from "@heroui/react";
 import { Input } from "@heroui/react";
 import useInfoTab from "./useInfoTab";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { Controller } from "react-hook-form";
 
 interface PropTypes {
@@ -29,7 +29,10 @@ const InfoTab = (props: PropTypes) => {
         handleSubmitUpdateCategoryInfo,
         resetUpdateCategoryInfo,
         setValueUpdateCategoryInfo,
-    } = useInfoTab();
+    } = useInfoTab(
+        dataCategory.name as string,
+        dataCategory.description as string,
+    );
 
     useEffect(() => {
         if (isSuccessUpdate) {
@@ -112,7 +115,13 @@ const InfoTab = (props: PropTypes) => {
                         type="submit"
                         color="danger"
                         className="mt-2 disabled:bg-default-500"
-                        disabled={isPendingUpdate || !dataCategory._id}
+                        disabled={
+                            isPendingUpdate ||
+                            !dataCategory._id ||
+                            errorsUpdateCategoryInfo.description !==
+                                undefined ||
+                            errorsUpdateCategoryInfo.name !== undefined
+                        }
                     >
                         {isPendingUpdate ? (
                             <Spinner color="white" size="sm" />
