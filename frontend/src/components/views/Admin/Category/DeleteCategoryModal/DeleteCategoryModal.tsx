@@ -17,6 +17,8 @@ interface PropTypes {
     refetchCategory: () => void;
     selectedId: string;
     setSelectedId: Dispatch<SetStateAction<string>>;
+    selectedIcon: string;
+    setSelectedIcon: Dispatch<SetStateAction<string>>;
 }
 
 const DeleteCategoryModal = (props: PropTypes) => {
@@ -27,6 +29,8 @@ const DeleteCategoryModal = (props: PropTypes) => {
         refetchCategory,
         selectedId,
         setSelectedId,
+        selectedIcon,
+        setSelectedIcon,
     } = props;
 
     const {
@@ -63,6 +67,7 @@ const DeleteCategoryModal = (props: PropTypes) => {
                         onPress={() => {
                             onClose();
                             setSelectedId("");
+                            setSelectedIcon("");
                         }}
                         disabled={isPendingMutateDeleteCategory}
                     >
@@ -72,7 +77,12 @@ const DeleteCategoryModal = (props: PropTypes) => {
                         type="submit"
                         color="danger"
                         disabled={isPendingMutateDeleteCategory}
-                        onPress={() => mutateDeleteCategory(selectedId)}
+                        onPress={() =>
+                            mutateDeleteCategory({
+                                id: selectedId,
+                                icon: selectedIcon,
+                            })
+                        }
                     >
                         {isPendingMutateDeleteCategory ? (
                             <Spinner color="white" size="sm" />
