@@ -19,27 +19,48 @@ interface PropTypes {
     onUpdate: (data: ICategory) => void;
     isPendingUpdate: boolean;
     isSuccessUpdate: boolean;
+    setHasUnsavedChanges: (hasUnsavedChanges: boolean) => void;
 }
 
 const IconTab = (props: PropTypes) => {
-    const { currentIcon, onUpdate, isPendingUpdate, isSuccessUpdate } = props;
+    const {
+        currentIcon,
+        onUpdate,
+        isPendingUpdate,
+        isSuccessUpdate,
+        setHasUnsavedChanges,
+    } = props;
+
     const {
         controlUpdateCategoryIcon,
         errorsUpdateCategoryIcon,
         handleDeleteIcon,
         handleSubmitUpdateCategoryIcon,
         handleUploadIcon,
+        isDeleteDirectly,
         isPendingMutateDeleteFile,
         isPendingMutateUploadFile,
         preview,
         resetUpdateCategoryIcon,
-    } = useIconTab();
+        setOnUpdateCategoryIcon,
+    } = useIconTab(currentIcon);
+
+    useEffect(() => {
+        if (preview) {
+            setHasUnsavedChanges(true);
+        }
+    }, [preview]);
 
     useEffect(() => {
         if (isSuccessUpdate) {
             resetUpdateCategoryIcon();
+            setHasUnsavedChanges(false);
         }
     }, [isSuccessUpdate]);
+
+    useEffect(() => {
+        setOnUpdateCategoryIcon(onUpdate);
+    }, [onUpdate]);
 
     return (
         <Card className="w-full p-4 lg:w-1/2">
@@ -52,7 +73,7 @@ const IconTab = (props: PropTypes) => {
             <CardBody>
                 <form
                     className="flex flex-col gap-4"
-                    onSubmit={handleSubmitUpdateCategoryIcon(onUpdate)}
+                    onSubmit={handleSubmitUpdateCategoryIcon}
                 >
                     <div className="flex flex-col gap-2">
                         <p className="text-sm font-medium text-default-700">
@@ -82,13 +103,18 @@ const IconTab = (props: PropTypes) => {
                         render={({ field: { onChange, value, ...field } }) => (
                             <InputFile
                                 {...field}
-                                onDelete={() => handleDeleteIcon(onChange)}
+                                onDelete={() =>
+                                    handleDeleteIcon(
+                                        onChange,
+                                        setHasUnsavedChanges,
+                                    )
+                                }
                                 onUpload={(files) =>
                                     handleUploadIcon(files, onChange)
                                 }
                                 isDropable
                                 isUploading={isPendingMutateUploadFile}
-                                isDeleting={isPendingMutateDeleteFile}
+                                isDeleting={isDeleteDirectly}
                                 isInvalid={
                                     errorsUpdateCategoryIcon.icon !== undefined
                                 }
@@ -111,6 +137,7 @@ const IconTab = (props: PropTypes) => {
                         color="danger"
                         className="mt-2 disabled:bg-default-500"
                         disabled={
+                            typeof preview !== "string" ||
                             isPendingMutateUploadFile ||
                             isPendingMutateDeleteFile
                         }
