@@ -4,7 +4,7 @@ import categoryServices from "@/services/category.service";
 import { ICategory } from "@/types/Category";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -47,10 +47,22 @@ const useAddCategoryModal = () => {
                 file: files[0],
                 callback: (fileURL: string) => {
                     setValue("icon", fileURL);
+                    sessionStorage.setItem("temp_uploaded_icon", fileURL);
                 },
             });
         }
     };
+
+    useEffect(() => {
+        const tempURL = sessionStorage.getItem("temp_uploaded_icon");
+
+        if (tempURL) {
+            mutateDeleteFile({
+                fileURL: tempURL,
+                callback: () => sessionStorage.removeItem("temp_uploaded_icon"),
+            });
+        }
+    }, []);
 
     const handleDeleteIcon = (
         onChange: (files: FileList | undefined) => void,
@@ -79,9 +91,10 @@ const useAddCategoryModal = () => {
             reset();
             onClose();
         }
-    }
+    };
 
     const addCategory = async (payload: ICategory) => {
+        sessionStorage.removeItem("temp_uploaded_icon");
         const res = await categoryServices.addCategory(payload);
 
         return res;
