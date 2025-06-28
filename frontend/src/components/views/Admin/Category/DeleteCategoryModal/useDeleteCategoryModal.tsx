@@ -1,5 +1,7 @@
 import { ToasterContext } from "@/contexts/ToasterContext";
+import useMediaHandling from "@/hooks/useMediaHandling";
 import categoryServices from "@/services/category.service";
+import uploadServices from "@/services/upload.service";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useContext } from "react";
@@ -7,9 +9,17 @@ import { useContext } from "react";
 const useDeleteCategoryModal = () => {
     const { setToaster } = useContext(ToasterContext);
 
-    const deleteCategory = async (id: string) => {
-        const res = await categoryServices.deleteCategory(id);
-        return res;
+    const { mutateDeleteFile } = useMediaHandling();
+
+    const deleteCategoryAndFile = async ({
+        id,
+        icon,
+    }: {
+        id: string;
+        icon: string;
+    }) => {
+        await categoryServices.deleteCategory(id);
+        await uploadServices.deleteFile({ fileURL: icon });
     };
 
     const {
@@ -17,7 +27,7 @@ const useDeleteCategoryModal = () => {
         isPending: isPendingMutateDeleteCategory,
         isSuccess: isSuccessMutateDeleteCategory,
     } = useMutation({
-        mutationFn: deleteCategory,
+        mutationFn: deleteCategoryAndFile,
         onError: (error: AxiosError<{ meta: { message: string } }>) => {
             const message = error.response!.data.meta.message;
             setToaster({
