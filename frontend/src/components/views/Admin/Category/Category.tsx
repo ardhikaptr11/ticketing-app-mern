@@ -16,6 +16,7 @@ import { useCategory } from "./useCategory";
 import { SlOptionsVertical } from "react-icons/sl";
 import AddCategoryModal from "./AddCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
+import DropdownAction from "@/components/commons/DropdownAction";
 
 const Category = () => {
     const { push, query } = useRouter();
@@ -49,38 +50,16 @@ const Category = () => {
                     );
                 case "actions":
                     return (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <SlOptionsVertical className="text-defualt-700" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem
-                                    key="detail-category-button"
-                                    onPress={() =>
-                                        push(`/admin/category/${category._id}`)
-                                    }
-                                    startContent={
-                                        <IoInformationCircleOutline />
-                                    }
-                                >
-                                    Detail
-                                </DropdownItem>
-                                <DropdownItem
-                                    key="delete-category-button"
-                                    className="text-red-500"
-                                    startContent={<IoTrashOutline />}
-                                    onPress={() => {
-                                        setSelectedId(`${category._id}`);
-                                        setSelectedIcon(`${category.icon}`);
-                                        deleteCategoryModal.onOpen();
-                                    }}
-                                >
-                                    Delete
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                        <DropdownAction
+                            onPressButtonDetail={() =>
+                                push(`/admin/category/${category._id}`)
+                            }
+                            onPressButtonDelete={() => {
+                                setSelectedId(`${category._id}`);
+                                setSelectedIcon(`${category.icon}`);
+                                deleteCategoryModal.onOpen();
+                            }}
+                        />
                     );
                 default:
                     return cellValue as ReactNode;
