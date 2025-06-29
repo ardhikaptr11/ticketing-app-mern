@@ -1,19 +1,14 @@
 import DataTable from "@/components/ui/DataTable";
 import {
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
+    Chip,
     useDisclosure,
 } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Key, ReactNode, useCallback } from "react";
-import { IoTrashOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { COLUMN_LIST_EVENT } from "./Event.constants";
 import { useEvent } from "./useEvent";
-import { SlOptionsVertical } from "react-icons/sl";
+import DropdownAction from "@/components/commons/DropdownAction";
 
 const Event = () => {
     const { push, query } = useRouter();
@@ -58,39 +53,23 @@ const Event = () => {
                             className="aspect-video w-36 rounded-lg object-cover"
                         />
                     );
+                case "isPublished":
+                    return (
+                        <Chip color={cellValue === true ? "success" : "warning"} size="sm" variant="flat">
+                            {cellValue === true ? "Published" : "Not Published"}
+                        </Chip>
+                    );
                 case "actions":
                     return (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <SlOptionsVertical className="text-defualt-700" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem
-                                    key="detail-category-button"
-                                    onPress={() =>
-                                        push(`/admin/event/${event._id}`)
-                                    }
-                                    startContent={
-                                        <IoInformationCircleOutline />
-                                    }
-                                >
-                                    Detail
-                                </DropdownItem>
-                                <DropdownItem
-                                    key="delete-event-button"
-                                    className="text-red-500"
-                                    startContent={<IoTrashOutline />}
-                                    onPress={() => {
-                                        setSelectedId(`${event._id}`);
-                                        // deleteEventModal.onOpen();
-                                    }}
-                                >
-                                    Delete
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                        <DropdownAction
+                            onPressButtonDetail={() =>
+                                push(`/admin/event/${event._id}`)
+                            }
+                            onPressButtonDelete={() => {
+                                setSelectedId(`${event._id}`);
+                                // deleteEventModal.onOpen();
+                            }}
+                        />
                     );
                 default:
                     return cellValue as ReactNode;
