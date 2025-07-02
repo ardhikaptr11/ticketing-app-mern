@@ -52,8 +52,23 @@ const useDetailCategory = () => {
         },
     });
 
-    const handleUpdateCategoryInfo = (data: ICategory) =>
+    const handleUpdateCategoryInfo = async (data: ICategory) => {
+        const inputToCompare = ["name", "description"] as const;
+
+        const dataFromDb = await getQueryById(`${query.id}`);
+
+        const isEqual = inputToCompare.every(
+            (item) => data[item] === dataFromDb[item],
+        );
+
+        if (isEqual)
+            return setToaster({
+                type: "error",
+                message: "At least one field must be changed",
+            });
+
         mutateUpdateCategoryInfo(data);
+    };
 
     return {
         dataCategory,
