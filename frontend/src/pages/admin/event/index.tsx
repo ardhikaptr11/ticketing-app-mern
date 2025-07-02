@@ -4,7 +4,7 @@ import Event from "@/components/views/Admin/Event";
 const AdminEventPage = () => {
     return (
         <DashboardLayout
-            title="Events"
+            title="Event"
             description="List of all events, create new and manage existing events"
             type="admin"
         >
