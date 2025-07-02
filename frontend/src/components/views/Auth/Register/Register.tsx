@@ -1,9 +1,19 @@
 import Image from "next/image";
-import { Card, CardBody, Link, Input, Button, Spinner } from "@heroui/react";
+import {
+    Card,
+    CardBody,
+    Link,
+    Input,
+    Button,
+    Spinner,
+    Tooltip,
+} from "@heroui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
 
 import useRegister from "../Register/useRegister";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useState } from "react";
 
 const Register = () => {
     const {
@@ -16,14 +26,19 @@ const Register = () => {
         errors,
     } = useRegister();
 
+    const [isFocused, setIsFocused] = useState(false);
+
+    const isMobile = useMediaQuery("(max-width: 768px)");
+
     return (
         <div className="flex w-full flex-col items-center justify-center gap-10 lg:flex-row lg:gap-20">
             <div className="flex w-full flex-col items-center justify-center gap-10 lg:w-1/3">
                 <Image
                     src="/images/general/zentix.png"
-                    alt="Logo"
+                    alt="Zentix logo"
                     width={120}
                     height={120}
+                    priority
                 />
                 <Image
                     src="/images/illustrations/login.svg"
@@ -103,35 +118,61 @@ const Register = () => {
                             name="password"
                             control={control}
                             render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    label="Password"
-                                    type={
-                                        isVisible.password ? "text" : "password"
+                                <Tooltip
+                                    placement={isMobile ? "top" : "right"}
+                                    isOpen={isMobile ? isFocused : undefined}
+                                    offset={10}
+                                    content={
+                                        <div className="max-w-[250px] p-2">
+                                            <h3 className="text-small font-bold">
+                                                Required
+                                            </h3>
+                                            <p className="text-tiny">
+                                                Password must include uppercase,
+                                                number, and symbol (min 8 chars)
+                                            </p>
+                                        </div>
                                     }
-                                    variant="bordered"
-                                    autoComplete="off"
-                                    isInvalid={errors.password !== undefined}
-                                    errorMessage={errors.password?.message}
-                                    endContent={
-                                        <button
-                                            aria-label="toggle password visibility"
-                                            className="self-center focus:outline-none"
-                                            type="button"
-                                            onClick={() =>
-                                                handleVisiblePassword(
-                                                    "password",
-                                                )
+                                    showArrow
+                                >
+                                    <div className="w-full">
+                                        <Input
+                                            {...field}
+                                            label="Password"
+                                            type={
+                                                isVisible.password
+                                                    ? "text"
+                                                    : "password"
                                             }
-                                        >
-                                            {isVisible.password ? (
-                                                <FaEye className="pointer-events-none text-xl text-default-400" />
-                                            ) : (
-                                                <FaEyeSlash className="pointer-events-none text-xl text-default-400" />
-                                            )}
-                                        </button>
-                                    }
-                                />
+                                            variant="bordered"
+                                            autoComplete="off"
+                                            isInvalid={!!errors.password}
+                                            errorMessage={
+                                                errors.password?.message
+                                            }
+                                            onFocus={() => setIsFocused(true)}
+                                            onBlur={() => setIsFocused(false)}
+                                            endContent={
+                                                <button
+                                                    aria-label="toggle password visibility"
+                                                    className="self-center focus:outline-none"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleVisiblePassword(
+                                                            "password",
+                                                        )
+                                                    }
+                                                >
+                                                    {isVisible.password ? (
+                                                        <FaEye className="pointer-events-none text-xl text-default-400" />
+                                                    ) : (
+                                                        <FaEyeSlash className="pointer-events-none text-xl text-default-400" />
+                                                    )}
+                                                </button>
+                                            }
+                                        />
+                                    </div>
+                                </Tooltip>
                             )}
                         />
 

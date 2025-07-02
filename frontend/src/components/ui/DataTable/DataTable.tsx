@@ -1,4 +1,4 @@
-import { LIMIT_LISTS } from "@/constants/list.contants";
+import { LIMIT_LISTS } from "@/constants/list.constants";
 import {
     Button,
     Input,
@@ -13,41 +13,39 @@ import {
     TableHeader,
     TableRow,
 } from "@heroui/react";
-import { ChangeEvent, Key, ReactNode, useMemo } from "react";
+import { Key, ReactNode, useMemo } from "react";
 import { CiSearch } from "react-icons/ci";
-import { cn } from "../../../../utils/cn";
+import { cn } from "../../../utils/cn";
+import useChangeURL from "@/hooks/useChangeURL";
 
 interface PropTypes {
     buttonTopContentLabel?: string;
     columns: Record<string, unknown>[];
-    currentPage: number;
     data: Record<string, unknown>[];
     emptyContent: string;
     isLoading?: boolean;
-    limit: string;
-    onClearSearch: () => void;
     onClickButtonTopContent?: () => void;
-    onPageChange: (page: number) => void;
-    onLimitChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-    onSearchChange: (e: ChangeEvent<HTMLInputElement>) => void;
     renderCell: (item: Record<string, unknown>, columnKey: Key) => ReactNode;
     totalPages: number;
 }
 
 const DataTable = (props: PropTypes) => {
     const {
+        currentLimit,
+        currentPage,
+        handleClearSearch,
+        handleChangePage,
+        handleSearch,
+        handleChangeLimit,
+    } = useChangeURL();
+
+    const {
         buttonTopContentLabel,
         columns,
-        currentPage,
         data,
         emptyContent,
         isLoading,
-        limit,
-        onClearSearch,
         onClickButtonTopContent,
-        onPageChange,
-        onLimitChange,
-        onSearchChange,
         renderCell,
         totalPages,
     } = props;
@@ -60,8 +58,8 @@ const DataTable = (props: PropTypes) => {
                     className="w-full sm:max-w-[24%]"
                     placeholder="Search by name"
                     startContent={<CiSearch />}
-                    onChange={onSearchChange}
-                    onClear={onClearSearch}
+                    onChange={handleSearch}
+                    onClear={handleClearSearch}
                 />
                 {buttonTopContentLabel && (
                     <Button color="danger" onPress={onClickButtonTopContent}>
@@ -72,44 +70,48 @@ const DataTable = (props: PropTypes) => {
         ),
         [
             buttonTopContentLabel,
-            onClearSearch,
-            onSearchChange,
+            handleClearSearch,
+            handleSearch,
             onClickButtonTopContent,
         ],
     );
 
     const BottomContent = useMemo(
         () => (
-            <div className="flex items-center justify-center px-2 py-2 lg:justify-between">
+            <div className="flex items-center justify-center lg:justify-between">
                 <Select
+                    aria-label="Rows per page"
                     className="hidden max-w-36 lg:block"
                     size="md"
-                    selectedKeys={[limit]}
+                    selectedKeys={[`${currentLimit}`]}
                     selectionMode="single"
-                    onChange={onLimitChange}
+                    onChange={handleChangeLimit}
                     startContent={<p className="text-small">Show:</p>}
+                    disallowEmptySelection
                 >
                     {LIMIT_LISTS.map((item) => (
-                        <SelectItem key={item.value} textValue={item.label}>
-                            {item.label}
-                        </SelectItem>
+                        <SelectItem key={item.value}>{item.label}</SelectItem>
                     ))}
                 </Select>
-                <Pagination
-                    isCompact
-                    showControls
-                    color="danger"
-                    page={currentPage}
-                    total={totalPages}
-                    onChange={onPageChange}
-                />
+                {totalPages > 1 && (
+                    <Pagination
+                        isCompact
+                        showControls
+                        color="danger"
+                        page={Number(currentPage)}
+                        total={totalPages}
+                        onChange={handleChangePage}
+                        loop
+                    />
+                )}
             </div>
         ),
-        [limit, currentPage, totalPages, onPageChange, onLimitChange],
+        [currentLimit, currentPage, totalPages, handleChangePage, handleChangeLimit],
     );
 
     return (
         <Table
+            aria-label="Category list table"
             bottomContent={BottomContent}
             bottomContentPlacement="outside"
             classNames={{
@@ -132,7 +134,12 @@ const DataTable = (props: PropTypes) => {
                 isLoading={isLoading}
                 loadingContent={
                     <div className="flex h-full w-full items-center justify-center bg-foreground-700/30 backdrop-blur-sm">
-                        <Spinner color="danger" variant="wave" />
+                        <Spinner
+                            color="danger"
+                            label="Loading"
+                            variant="wave"
+                            classNames={{ label: "text-default-500" }}
+                        />
                     </div>
                 }
             >

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
 import { User } from "@heroui/react";
 import PageHead from "@/components/commons/PageHead";

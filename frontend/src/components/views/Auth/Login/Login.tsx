@@ -47,11 +47,6 @@ const Login = () => {
                             Register here
                         </Link>
                     </p>
-                    {errors.root && (
-                        <p className="mb-2 font-medium text-danger text-xs">
-                            {errors?.root?.message}
-                        </p>
-                    )}
                     <form
                         className="flex w-80 flex-col gap-4"
                         onSubmit={handleSubmit(handleLogin)}

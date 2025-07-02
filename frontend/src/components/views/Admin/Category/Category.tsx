@@ -5,16 +5,34 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    useDisclosure,
 } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { Key, ReactNode, useCallback } from "react";
-import { CiCircleInfo, CiMenuKebab, CiTrash } from "react-icons/ci";
+import { Key, ReactNode, useCallback } from "react";
+import { IoTrashOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { COLUMN_LIST_CATEGORY } from "./Category.constants";
-import { LIMIT_LISTS } from "@/constants/list.contants";
+import { useCategory } from "./useCategory";
+import { SlOptionsVertical } from "react-icons/sl";
+import AddCategoryModal from "./AddCategoryModal";
+import DeleteCategoryModal from "./DeleteCategoryModal";
+import DropdownAction from "@/components/commons/DropdownAction";
 
 const Category = () => {
-    const { push } = useRouter();
+    const { push, query } = useRouter();
+    const {
+        dataCategory,
+        isLoadingCategory,
+        isRefetchingCategory,
+        refetchCategories,
+        selectedId,
+        setSelectedId,
+        selectedIcon,
+        setSelectedIcon,
+    } = useCategory();
+
+    const addCategoryModal = useDisclosure();
+    const deleteCategoryModal = useDisclosure();
 
     const renderCell = useCallback(
         (category: Record<string, unknown>, columnKey: Key) => {
@@ -25,38 +43,23 @@ const Category = () => {
                     return (
                         <Image
                             src={cellValue as string}
-                            alt="Category Icon"
+                            alt="Category icon"
                             width={100}
                             height={200}
                         />
                     );
                 case "actions":
                     return (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <CiMenuKebab className="text-defualt-700" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem
-                                    key="detail-category-button"
-                                    onPress={() =>
-                                        push(`/admin/category/${category._id}`)
-                                    }
-                                    startContent={<CiCircleInfo />}
-                                >
-                                    Detail
-                                </DropdownItem>
-                                <DropdownItem
-                                    key="delete-category-button"
-                                    className="text-red-500"
-                                    startContent={<CiTrash />}
-                                >
-                                    Delete
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                        <DropdownAction
+                            onPressButtonDetail={() =>
+                                push(`/admin/category/${category._id}`)
+                            }
+                            onPressButtonDelete={() => {
+                                setSelectedId(`${category._id}`);
+                                setSelectedIcon(`${category.icon}`);
+                                deleteCategoryModal.onOpen();
+                            }}
+                        />
                     );
                 default:
                     return cellValue as ReactNode;
@@ -67,33 +70,29 @@ const Category = () => {
 
     return (
         <section>
-            <DataTable
-                buttonTopContentLabel="Create Category"
-                columns={COLUMN_LIST_CATEGORY}
-                currentPage={1}
-                data={[
-                    {
-                        _id: "1",
-                        name: "Category 1",
-                        description: "This is a description for Category 1",
-                        icon: "/images/general/zentix.png",
-                    },
-                    {
-                        _id: "2",
-                        name: "Category 2",
-                        description: "This is a description for Category 2",
-                        icon: "/images/general/zentix.png",
-                    },
-                ]}
-                emptyContent="Category is empty"
-                limit={LIMIT_LISTS[0].label}
-                onClickButtonTopContent={() => {}}
-                onClearSearch={() => {}}
-                onPageChange={() => {}}
-                onSearchChange={() => {}}
-                onLimitChange={() => {}}
-                renderCell={renderCell}
-                totalPages={2}
+            {Object.keys(query).length > 0 && (
+                <DataTable
+                    buttonTopContentLabel="Create Category"
+                    columns={COLUMN_LIST_CATEGORY}
+                    data={dataCategory?.data || []}
+                    emptyContent="Category is empty"
+                    isLoading={isLoadingCategory || isRefetchingCategory}
+                    onClickButtonTopContent={addCategoryModal.onOpen}
+                    renderCell={renderCell}
+                    totalPages={dataCategory?.pagination.totalPages}
+                />
+            )}
+            <AddCategoryModal
+                refetchCategories={refetchCategories}
+                {...addCategoryModal}
+            />
+            <DeleteCategoryModal
+                refetchCategories={refetchCategories}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+                selectedIcon={selectedIcon}
+                setSelectedIcon={setSelectedIcon}
+                {...deleteCategoryModal}
             />
         </section>
     );
