@@ -7,6 +7,7 @@ import eventServices from "@/services/event.service";
 
 export const useEvent = () => {
     const [selectedId, setSelectedId] = useState("");
+    const [selectedIcon, setSelectedIcon] = useState("");
     const { isReady } = useRouter();
 
     const { currentLimit, currentPage, currentSearch } = useChangeURL();
@@ -33,8 +34,6 @@ export const useEvent = () => {
         enabled: isReady && !!currentPage && !!currentLimit,
     });
 
-    console.log(dataEvents)
-
     return {
         currentPage,
         currentLimit,
@@ -43,6 +42,8 @@ export const useEvent = () => {
         isLoadingEvents,
         isRefetchingEvents,
         refetchEvents,
+        selectedIcon,
+        setSelectedIcon,
         selectedId,
         setSelectedId,
     };
