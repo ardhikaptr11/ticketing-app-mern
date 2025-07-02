@@ -27,7 +27,7 @@ export const useCategory = () => {
         data: dataCategory,
         isLoading: isLoadingCategory,
         isRefetching: isRefetchingCategory,
-        refetch: refetchCategory,
+        refetch: refetchCategories,
     } = useQuery({
         queryKey: ["Categories", currentPage, currentLimit, currentSearch],
         queryFn: () => getCategories(),
@@ -41,7 +41,7 @@ export const useCategory = () => {
         dataCategory,
         isLoadingCategory,
         isRefetchingCategory,
-        refetchCategory,
+        refetchCategories,
         selectedId,
         setSelectedId,
         selectedIcon,

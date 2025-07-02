@@ -14,7 +14,7 @@ interface PropTypes {
     isOpen: boolean;
     onClose: () => void;
     onOpenChange: () => void;
-    refetchCategory: () => void;
+    refetchCategories: () => void;
     selectedId: string;
     setSelectedId: Dispatch<SetStateAction<string>>;
     selectedIcon: string;
@@ -26,7 +26,7 @@ const DeleteCategoryModal = (props: PropTypes) => {
         isOpen,
         onClose,
         onOpenChange,
-        refetchCategory,
+        refetchCategories,
         selectedId,
         setSelectedId,
         selectedIcon,
@@ -42,7 +42,7 @@ const DeleteCategoryModal = (props: PropTypes) => {
     useEffect(() => {
         if (isSuccessMutateDeleteCategory) {
             onClose();
-            refetchCategory();
+            refetchCategories();
         }
     }, [isSuccessMutateDeleteCategory]);
 

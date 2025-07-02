@@ -18,11 +18,11 @@ interface PropTypes {
     isOpen: boolean;
     onClose: () => void;
     onOpenChange: () => void;
-    refetchCategory: () => void;
+    refetchCategories: () => void;
 }
 
 const AddCategoryModal = (props: PropTypes) => {
-    const { isOpen, onClose, onOpenChange, refetchCategory } = props;
+    const { isOpen, onClose, onOpenChange, refetchCategories } = props;
 
     const {
         control,
@@ -42,7 +42,7 @@ const AddCategoryModal = (props: PropTypes) => {
     useEffect(() => {
         if (isSuccessMutateAddCategory) {
             onClose();
-            refetchCategory();
+            refetchCategories();
         }
     }, [isSuccessMutateAddCategory]);
 
@@ -61,7 +61,7 @@ const AddCategoryModal = (props: PropTypes) => {
         >
             <form onSubmit={handleSubmitForm(handleAddCategory)}>
                 <ModalContent className="m-4">
-                    <ModalHeader>Add Category</ModalHeader>
+                    <ModalHeader>Add New Category</ModalHeader>
                     <ModalBody>
                         <div className="flex flex-col gap-2">
                             <p className="text-sm font-bold">Information</p>

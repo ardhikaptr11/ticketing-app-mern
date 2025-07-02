@@ -24,7 +24,7 @@ const Category = () => {
         dataCategory,
         isLoadingCategory,
         isRefetchingCategory,
-        refetchCategory,
+        refetchCategories,
         selectedId,
         setSelectedId,
         selectedIcon,
@@ -83,11 +83,11 @@ const Category = () => {
                 />
             )}
             <AddCategoryModal
-                refetchCategory={refetchCategory}
+                refetchCategories={refetchCategories}
                 {...addCategoryModal}
             />
             <DeleteCategoryModal
-                refetchCategory={refetchCategory}
+                refetchCategories={refetchCategories}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
                 selectedIcon={selectedIcon}

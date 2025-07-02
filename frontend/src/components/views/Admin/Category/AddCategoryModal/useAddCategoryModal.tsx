@@ -8,7 +8,7 @@ import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-const schema = yup.object().shape({
+const addCategorySchema = yup.object().shape({
     name: yup.string().required("Category name is required"),
     description: yup.string().required("Category description is required"),
     icon: yup.mixed<FileList | string>().required("Category icon is required"),
@@ -17,9 +17,9 @@ const schema = yup.object().shape({
 const useAddCategoryModal = () => {
     const { setToaster } = useContext(ToasterContext);
     const {
-        mutateUploadFile,
+        handleDeleteFile,
+        handleUploadFile,
         isPendingMutateUploadFile,
-        mutateDeleteFile,
         isPendingMutateDeleteFile,
     } = useMediaHandling();
 
@@ -32,65 +32,45 @@ const useAddCategoryModal = () => {
         getValues,
         setValue,
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(addCategorySchema),
     });
 
     const preview = watch("icon");
+    const fileURL = getValues("icon");
 
     const handleUploadIcon = (
         files: FileList,
         onChange: (files: FileList | undefined) => void,
     ) => {
-        if (files.length !== 0) {
-            onChange(files);
-            mutateUploadFile({
-                file: files[0],
-                callback: (fileURL: string) => {
-                    setValue("icon", fileURL);
-                    sessionStorage.setItem("temp_uploaded_icon", fileURL);
-                },
-            });
-        }
+        handleUploadFile(files, onChange, (fileURL: string | undefined) => {
+            if (fileURL) {
+                setValue("icon", fileURL);
+                sessionStorage.setItem("temp_uploaded_icon", fileURL);
+            }
+        });
     };
 
     useEffect(() => {
         const tempURL = sessionStorage.getItem("temp_uploaded_icon");
 
         if (tempURL) {
-            mutateDeleteFile({
-                fileURL: tempURL,
-                callback: () => sessionStorage.removeItem("temp_uploaded_icon"),
-            });
+            handleDeleteFile(tempURL, () =>
+                sessionStorage.removeItem("temp_uploaded_icon"),
+            );
         }
     }, []);
 
     const handleDeleteIcon = (
         onChange: (files: FileList | undefined) => void,
     ) => {
-        const fileURL = getValues("icon");
-
-        if (typeof fileURL === "string") {
-            mutateDeleteFile({
-                fileURL,
-                callback: () => onChange(undefined),
-            });
-        }
+        handleDeleteFile(fileURL, () => onChange(undefined));
     };
 
     const handleOnClose = (onClose: () => void) => {
-        const fileURL = getValues("icon");
-        if (typeof fileURL === "string") {
-            mutateDeleteFile({
-                fileURL,
-                callback: () => {
-                    reset();
-                    onClose();
-                },
-            });
-        } else {
+        handleDeleteFile(fileURL, () => {
             reset();
             onClose();
-        }
+        });
     };
 
     const addCategory = async (payload: ICategory) => {
