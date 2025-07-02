@@ -49,7 +49,7 @@ const useLogin = () => {
         formState: { errors },
         reset,
         setError,
-    } = useForm<ILogin>({
+    } = useForm({
         resolver: yupResolver(loginSchema),
         defaultValues: {
             identifier: "",
