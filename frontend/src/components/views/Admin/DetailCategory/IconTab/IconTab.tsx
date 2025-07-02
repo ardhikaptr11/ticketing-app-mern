@@ -6,7 +6,6 @@ import {
     Skeleton,
     Spinner,
 } from "@heroui/react";
-import useDetailCategory from "../useDetailCategory";
 import Image from "next/image";
 import InputFile from "@/components/ui/InputFile";
 import useIconTab from "./useIconTab";
