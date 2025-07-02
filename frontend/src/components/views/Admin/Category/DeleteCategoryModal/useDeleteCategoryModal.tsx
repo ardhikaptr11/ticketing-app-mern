@@ -9,8 +9,6 @@ import { useContext } from "react";
 const useDeleteCategoryModal = () => {
     const { setToaster } = useContext(ToasterContext);
 
-    const { mutateDeleteFile } = useMediaHandling();
-
     const deleteCategoryAndFile = async ({
         id,
         icon,
