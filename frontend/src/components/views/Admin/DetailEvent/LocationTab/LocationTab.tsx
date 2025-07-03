@@ -55,7 +55,10 @@ const InfoTab = (props: PropTypes) => {
     useEffect(() => {
         if (dataEvent) {
             setValueUpdateEventLocation("isOnline", `${dataEvent?.isOnline}`);
-            setValueUpdateEventLocation("region", dataDefaultRegion);
+            setValueUpdateEventLocation(
+                "region",
+                `${dataEvent?.location?.region}`,
+            );
             setValueUpdateEventLocation(
                 "longitude",
                 `${dataEvent?.location?.coordinates[0]}`,
