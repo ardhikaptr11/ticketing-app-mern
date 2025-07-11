@@ -3,6 +3,7 @@ import {
     getLocalTimeZone,
     now,
     parseAbsoluteToLocal,
+    parseZonedDateTime,
     ZonedDateTime,
 } from "@internationalized/date";
 
@@ -25,8 +26,8 @@ const standardizeDate = (date: DateValue) => {
 };
 
 const formatDate = (date: string) => {
-    const formattedDate = parseAbsoluteToLocal(
-        `${date.replace(" ", "T")}+07:00`,
+    const formattedDate = parseZonedDateTime(
+        `${date.replace(" ", "T")}[Asia/Jakarta]`,
     );
 
     return formattedDate;
