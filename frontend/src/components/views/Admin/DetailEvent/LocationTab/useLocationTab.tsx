@@ -1,14 +1,13 @@
-import { IEvent, IEventForm } from "@/types/Event";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { currentDate, standardizeDate } from "@/utils/date";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useContext, useState } from "react";
 import eventServices from "@/services/event.service";
 import { useDebounce } from "@/hooks/useDebounce";
 import { DELAY } from "@/constants/list.constants";
+import { ToasterContext } from "@/contexts/ToasterContext";
+import { useRouter } from "next/router";
 
 const schemaUpdateEventLocation = yup.object().shape({
     isOnline: yup.string().required("Location is required"),
@@ -17,8 +16,12 @@ const schemaUpdateEventLocation = yup.object().shape({
     latitude: yup.string().required("Latitude is required"),
 });
 
-const useInfoTab = () => {
+const useLocationTab = () => {
     const [searchRegency, setSearchRegency] = useState("");
+
+    const { isReady } = useRouter();
+    const { setToaster } = useContext(ToasterContext);
+
     const debounce = useDebounce();
 
     const {
@@ -28,9 +31,19 @@ const useInfoTab = () => {
         reset: resetUpdateEventLocation,
         setValue: setValueUpdateEventLocation,
         watch: watchUpdateEventLocation,
+        clearErrors,
     } = useForm({
         resolver: yupResolver(schemaUpdateEventLocation),
     });
+
+    const isOnline = watchUpdateEventLocation("isOnline");
+
+    const getGeolocation = async (regency: string) => {
+        const { data } = await eventServices.getGeolocationByRegency(regency);
+        const { latitude, longitude } = data.results[0].location;
+
+        return { latitude, longitude };
+    };
 
     const { data: dataRegion } = useQuery({
         queryKey: ["Regions", searchRegency],
@@ -39,10 +52,25 @@ const useInfoTab = () => {
         enabled: searchRegency !== "",
     });
 
-    const handleGetRegency = async (id: string) => {
-        const { data } = await eventServices.getRegencyById(id);
-        return data.data;
-    }
+    const {
+        mutate: mutateFetchGeolocation,
+        isPending: isPendingMutateFetchGeolocation,
+    } = useMutation({
+        mutationFn: (regency: string) => getGeolocation(regency),
+        onError: (error) => {
+            setToaster({
+                type: "error",
+                message: error.message,
+            });
+        },
+        onSuccess: (data) => {
+            setValueUpdateEventLocation("latitude", data.latitude);
+            setValueUpdateEventLocation("longitude", data.longitude);
+            clearErrors(["latitude", "longitude"]);
+        },
+    });
+
+    const handleFetchGeolocation = () => mutateFetchGeolocation(searchRegency);
 
     const handleSearchRegion = (region: string) => {
         debounce(() => setSearchRegency(region), DELAY);
@@ -51,15 +79,15 @@ const useInfoTab = () => {
     return {
         controlUpdateEventLocation,
         dataRegion,
-        handleSearchRegion,
         errorsUpdateEventLocation,
+        handleFetchGeolocation,
+        handleSearchRegion,
         handleSubmitUpdateEventLocation,
-        handleGetRegency,
-        resetUpdateEventLocation,
+        isPendingMutateFetchGeolocation,
+        isOnline,
         searchRegency,
         setValueUpdateEventLocation,
-        watchUpdateEventLocation,
     };
 };
 
-export default useInfoTab;
+export default useLocationTab;
