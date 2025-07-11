@@ -17,7 +17,7 @@ const DropdownAction = (props: PropTypes) => {
         <Dropdown>
             <DropdownTrigger>
                 <Button isIconOnly size="sm" variant="light">
-                    <SlOptionsVertical className="text-defualt-700" />
+                    <SlOptionsVertical className="text-default-700" />
                 </Button>
             </DropdownTrigger>
             <DropdownMenu>
