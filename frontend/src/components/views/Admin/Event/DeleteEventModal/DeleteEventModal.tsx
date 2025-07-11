@@ -76,6 +76,7 @@ const DeleteEventModal = (props: PropTypes) => {
                     <Button
                         type="submit"
                         color="danger"
+                        className="disabled:bg-default-500"
                         disabled={isPendingMutateDeleteEvent}
                         onPress={() =>
                             mutateDeleteEvent({

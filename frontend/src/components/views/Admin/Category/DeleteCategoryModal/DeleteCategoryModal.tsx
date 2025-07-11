@@ -76,6 +76,7 @@ const DeleteCategoryModal = (props: PropTypes) => {
                     <Button
                         type="submit"
                         color="danger"
+                        className="disabled:bg-default-500"
                         disabled={isPendingMutateDeleteCategory}
                         onPress={() =>
                             mutateDeleteCategory({
