@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 const schemaUpdateEventBanner = yup.object().shape({
-    banner: yup.mixed<FileList | string>().required("Icon is required"),
+    banner: yup.mixed<FileList | string>().required("Banner is required"),
 });
 
 const useBannerTab = (currentBanner: string) => {
@@ -46,11 +46,13 @@ const useBannerTab = (currentBanner: string) => {
 
     useEffect(() => {
         const tempURL = sessionStorage.getItem("temp_uploaded_banner");
+        const status = sessionStorage.getItem("uploaded_banner_status");
 
-        if (tempURL) {
-            handleDeleteFile(tempURL, () =>
-                sessionStorage.removeItem("temp_uploaded_banner"),
-            );
+        if (tempURL && status !== "saved") {
+            handleDeleteFile(tempURL, () => {
+                sessionStorage.removeItem("temp_uploaded_banner");
+                sessionStorage.removeItem("uploaded_banner_status");
+            });
         }
     }, []);
 
@@ -65,7 +67,9 @@ const useBannerTab = (currentBanner: string) => {
         handleUploadFile(files, onChange, (fileURL: string | undefined) => {
             if (fileURL) {
                 setValueUpdateEventBanner("banner", fileURL);
+
                 sessionStorage.setItem("temp_uploaded_banner", fileURL);
+                sessionStorage.setItem("uploaded_banner_status", "unsaved");
             }
         });
     };
@@ -77,24 +81,34 @@ const useBannerTab = (currentBanner: string) => {
         setIsDeleteDirectly(true);
         handleDeleteFile(fileURL, () => {
             onChange(undefined);
+
             setHasUnsavedChanges(false);
             setIsDeleteDirectly(false);
+
+            sessionStorage.removeItem("temp_uploaded_banner");
+            sessionStorage.removeItem("uploaded_banner_status");
         });
     };
 
     const handleSubmitUpdateEventBanner = handleSubmit((data) => {
-        sessionStorage.removeItem("temp_uploaded_icon");
+        sessionStorage.removeItem("temp_uploaded_banner");
 
-        const oldIcon = initialBannerRef.current;
-        const newIcon = data.banner;
+        const oldBanner = initialBannerRef.current;
+        const newBanner = data.banner;
 
         const isChanged =
-            typeof oldIcon === "string" &&
-            typeof newIcon === "string" &&
-            oldIcon !== newIcon;
+            typeof oldBanner === "string" &&
+            typeof newBanner === "string" &&
+            oldBanner !== newBanner;
+
+        sessionStorage.setItem("uploaded_banner_status", "saved");
 
         if (isChanged)
-            handleDeleteFile(oldIcon, () => onUpdateRef.current?.(data));
+            handleDeleteFile(oldBanner, () => {
+                onUpdateRef.current?.(data);
+                sessionStorage.removeItem("temp_uploaded_banner");
+                sessionStorage.removeItem("uploaded_banner_status");
+            });
     });
 
     return {
