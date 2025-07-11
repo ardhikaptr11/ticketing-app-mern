@@ -38,18 +38,20 @@ const AddEventModal = (props: PropTypes) => {
         dataCategory,
         dataRegion,
         errors,
-        handleSubmitForm,
         handleAddEvent,
         handleDeleteBanner,
+        handleFetchGeolocation,
         handleOnClose,
         handleSearchRegion,
+        handleSubmitForm,
         handleUploadBanner,
+        isPendingMutateFetchGeolocation,
+        isOnline,
         isPendingMutateAddEvent,
         isPendingMutateDeleteFile,
         isPendingMutateUploadFile,
         isSuccessMutateAddEvent,
         preview,
-        reset,
         searchRegency,
         slugValue,
         startDateValue,
@@ -329,90 +331,129 @@ const AddEventModal = (props: PropTypes) => {
                                     )}
                                 />
                             </div>
-                            <p className="text-sm font-bold">Location</p>
-                            <div className="mb-4 flex flex-col gap-4">
-                                <Controller
-                                    name="region"
-                                    control={control}
-                                    render={({
-                                        field: { onChange, ...field },
-                                    }) => (
-                                        <Autocomplete
-                                            {...field}
-                                            aria-label="City selection"
-                                            size="md"
-                                            defaultItems={
-                                                dataRegion?.data.data &&
-                                                searchRegency !== ""
-                                                    ? dataRegion.data.data
-                                                    : []
-                                            }
-                                            label="City"
-                                            placeholder="Search city here"
-                                            variant="bordered"
-                                            onInputChange={(search) =>
-                                                handleSearchRegion(search)
-                                            }
-                                            isInvalid={
-                                                errors.region !== undefined
-                                            }
-                                            errorMessage={
-                                                errors.region?.message
-                                            }
-                                            onSelectionChange={(value) =>
-                                                onChange(value)
-                                            }
-                                        >
-                                            {(regency: IRegency) => (
-                                                <AutocompleteItem
-                                                    key={regency.id}
-                                                    textValue={regency.name}
+                            {isOnline === "false" && (
+                                <>
+                                    <p className="text-sm font-bold">
+                                        Location
+                                    </p>
+                                    <div className="mb-4 flex flex-col gap-4">
+                                        <Controller
+                                            name="region"
+                                            control={control}
+                                            render={({
+                                                field: { onChange, ...field },
+                                            }) => (
+                                                <Autocomplete
+                                                    {...field}
+                                                    aria-label="City selection"
+                                                    size="md"
+                                                    defaultItems={
+                                                        dataRegion?.data.data &&
+                                                        searchRegency !== ""
+                                                            ? dataRegion?.data
+                                                                  .data
+                                                            : []
+                                                    }
+                                                    label="City"
+                                                    placeholder="Search city here"
+                                                    variant="bordered"
+                                                    onInputChange={(search) =>
+                                                        handleSearchRegion(
+                                                            search,
+                                                        )
+                                                    }
+                                                    isInvalid={
+                                                        errors.region !==
+                                                        undefined
+                                                    }
+                                                    errorMessage={
+                                                        errors.region?.message
+                                                    }
+                                                    onSelectionChange={(
+                                                        value,
+                                                    ) => {
+                                                        value &&
+                                                            (onChange(value),
+                                                            handleFetchGeolocation());
+                                                    }}
                                                 >
-                                                    {regency.name}
-                                                </AutocompleteItem>
+                                                    {(regency: IRegency) => (
+                                                        <AutocompleteItem
+                                                            key={regency.id}
+                                                            textValue={
+                                                                regency.name
+                                                            }
+                                                        >
+                                                            {regency.name}
+                                                        </AutocompleteItem>
+                                                    )}
+                                                </Autocomplete>
                                             )}
-                                        </Autocomplete>
-                                    )}
-                                />
-
-                                <Controller
-                                    name="latitude"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input
-                                            {...field}
-                                            label="Latitude"
-                                            variant="bordered"
-                                            autoComplete="off"
-                                            isInvalid={
-                                                errors.latitude !== undefined
-                                            }
-                                            errorMessage={
-                                                errors.latitude?.message
-                                            }
                                         />
-                                    )}
-                                />
 
-                                <Controller
-                                    name="longitude"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input
-                                            {...field}
-                                            label="Longitude"
-                                            variant="bordered"
-                                            autoComplete="off"
-                                            isInvalid={
-                                                errors.longitude !== undefined
-                                            }
-                                            errorMessage={
-                                                errors.longitude?.message
-                                            }
+                                        <Controller
+                                            name="latitude"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Input
+                                                    {...field}
+                                                    label="Latitude"
+                                                    variant="bordered"
+                                                    autoComplete="off"
+                                                    isInvalid={
+                                                        errors.latitude !==
+                                                        undefined
+                                                    }
+                                                    errorMessage={
+                                                        errors.latitude?.message
+                                                    }
+                                                    endContent={
+                                                        isPendingMutateFetchGeolocation && (
+                                                            <Spinner
+                                                                color="danger"
+                                                                size="sm"
+                                                            />
+                                                        )
+                                                    }
+                                                    isDisabled
+                                                    isReadOnly
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </div>
+
+                                        <Controller
+                                            name="longitude"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Input
+                                                    {...field}
+                                                    label="Longitude"
+                                                    variant="bordered"
+                                                    autoComplete="off"
+                                                    isInvalid={
+                                                        errors.longitude !==
+                                                        undefined
+                                                    }
+                                                    errorMessage={
+                                                        errors.longitude
+                                                            ?.message
+                                                    }
+                                                    endContent={
+                                                        isPendingMutateFetchGeolocation && (
+                                                            <Spinner
+                                                                color="danger"
+                                                                size="sm"
+                                                            />
+                                                        )
+                                                    }
+                                                    isDisabled
+                                                    isReadOnly
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </>
+                            )}
                             <p className="text-sm font-bold">Banner</p>
                             <Controller
                                 name="banner"
@@ -456,8 +497,9 @@ const AddEventModal = (props: PropTypes) => {
                             type="submit"
                             color="danger"
                             disabled={disabledSubmit}
+                            className="disabled:bg-default-500"
                         >
-                            {disabledSubmit ? (
+                            {isPendingMutateAddEvent ? (
                                 <Spinner color="white" size="sm" />
                             ) : (
                                 "Add Event"
