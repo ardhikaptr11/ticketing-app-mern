@@ -33,4 +33,17 @@ const formatDate = (date: string) => {
     return formattedDate;
 };
 
-export { standardizeDate, formatDate, currentDate };
+const displayDate = (dateString: string) => {
+    const date = formatDate(dateString).toDate();
+
+    const formatter = new Intl.DateTimeFormat("id-ID", {
+        dateStyle: "long",
+        timeStyle: "short",
+        timeZone: "Asia/Jakarta",
+    });
+
+    const displayedDate = formatter.format(date);
+    return `${displayedDate.replace(" pukul", ",")} WIB`;
+};
+
+export { currentDate, displayDate, formatDate, standardizeDate };
