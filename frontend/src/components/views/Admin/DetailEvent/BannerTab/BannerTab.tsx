@@ -15,13 +15,13 @@ import { IEvent, IEventForm } from "@/types/Event";
 
 interface PropTypes {
     currentBanner: string;
-    onUpdate: (data: IEventForm) => void;
+    onUpdate: (data: IEvent) => void;
     isPendingUpdate: boolean;
     isSuccessUpdate: boolean;
     setHasUnsavedChanges: (hasUnsavedChanges: boolean) => void;
 }
 
-const CoverTab = (props: PropTypes) => {
+const BannerTab = (props: PropTypes) => {
     const {
         currentBanner,
         onUpdate,
@@ -153,4 +153,4 @@ const CoverTab = (props: PropTypes) => {
     );
 };
 
-export default CoverTab;
+export default BannerTab;
