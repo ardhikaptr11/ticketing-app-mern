@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Tab, Tabs } from "@heroui/react";
-import React, { useState } from "react";
-import CoverTab from "./BannerTab";
+import BannerTab from "./BannerTab";
 import InfoTab from "./InfoTab";
 import useDetailEvent from "./useDetailEvent";
 import LocationTab from "./LocationTab";
@@ -11,6 +11,7 @@ const DetailEvent = () => {
     const {
         dataDefaultRegion,
         dataEvent,
+        handleUpdateEvent,
         handleUpdateEventInfo,
         handleUpdateEventLocation,
         isPendingDefaultRegion,
@@ -23,9 +24,9 @@ const DetailEvent = () => {
     return (
         <Tabs aria-label="Options" disabledKeys={disabledTabs}>
             <Tab key="banner" title="Banner">
-                <CoverTab
+                <BannerTab
                     currentBanner={dataEvent?.banner}
-                    onUpdate={handleUpdateEventInfo}
+                    onUpdate={handleUpdateEvent}
                     isPendingUpdate={isPendingMutateUpdateEventInfo}
                     isSuccessUpdate={isSuccessMutateUpdateEventInfo}
                     setHasUnsavedChanges={setHasUnsavedChanges}
