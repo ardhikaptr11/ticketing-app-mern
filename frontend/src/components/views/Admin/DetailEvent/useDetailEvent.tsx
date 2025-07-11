@@ -90,7 +90,7 @@ const useDetailEvent = () => {
 
         const event = await getEventById(`${query.id}`);
 
-        const dataFromDb = {
+        const prevData = {
             name: event.name,
             slug: event.slug,
             category: event.category,
@@ -102,7 +102,7 @@ const useDetailEvent = () => {
         };
 
         const isEqual = inputToCompare.every(
-            (item) => payload[item] === dataFromDb[item],
+            (item) => payload[item] === prevData[item],
         );
 
         if (isEqual) {
@@ -121,14 +121,17 @@ const useDetailEvent = () => {
         const payload = {
             isOnline: data.isOnline === "true" ? true : false,
             location: {
-                region: `${data.region}`,
-                coordinates: [Number(data.latitude), Number(data.longitude)],
+                region: data.isOnline === "true" ? "0" : `${data.region}`,
+                coordinates:
+                    data.isOnline === "true"
+                        ? [0, 0]
+                        : [Number(data.latitude), Number(data.longitude)],
             },
         };
 
         const event = await getEventById(`${query.id}`);
 
-        const dataFromDb = {
+        const prevData = {
             isOnline: event.isOnline,
             location: {
                 region: `${event.location.region}`,
@@ -142,14 +145,14 @@ const useDetailEvent = () => {
         const isEqual = inputToCompare.every((item) => {
             if (item === "location") {
                 return (
-                    payload[item].region === dataFromDb[item].region &&
+                    payload[item].region === prevData[item].region &&
                     payload[item].coordinates[0] ===
-                        dataFromDb[item].coordinates[0] &&
+                        prevData[item].coordinates[0] &&
                     payload[item].coordinates[1] ===
-                        dataFromDb[item].coordinates[1]
+                        prevData[item].coordinates[1]
                 );
             } else {
-                return payload[item] === dataFromDb[item];
+                return payload[item] === prevData[item];
             }
         });
 
