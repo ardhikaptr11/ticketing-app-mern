@@ -55,10 +55,10 @@ const useDetailCategory = () => {
     const handleUpdateCategoryInfo = async (data: ICategory) => {
         const inputToCompare = ["name", "description"] as const;
 
-        const dataFromDb = await getQueryById(`${query.id}`);
+        const prevData = await getQueryById(`${query.id}`);
 
         const isEqual = inputToCompare.every(
-            (item) => data[item] === dataFromDb[item],
+            (item) => data[item] === prevData[item],
         );
 
         if (isEqual)
