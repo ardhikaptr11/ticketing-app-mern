@@ -8,6 +8,7 @@ import { useEvent } from "./useEvent";
 import DropdownAction from "@/components/commons/DropdownAction";
 import AddEventModal from "./AddEventModal";
 import DeleteEventModal from "./DeleteEventModal";
+import { displayDate } from "@/utils/date";
 
 const Event = () => {
     const { push, query } = useRouter();
@@ -24,18 +25,6 @@ const Event = () => {
 
     const addEventModal = useDisclosure();
     const deleteEventModal = useDisclosure();
-
-    const displayDate = (dateString: string) => {
-        const date = new Date(dateString);
-
-        const formatter = new Intl.DateTimeFormat("id-ID", {
-            dateStyle: "long",
-            timeStyle: "short",
-            timeZone: "Asia/Jakarta",
-        });
-        const displayedDate = formatter.format(date);
-        return `${displayedDate.replace(" pukul", ",")} WIB`;
-    };
 
     const renderCell = useCallback(
         (event: Record<string, unknown>, columnKey: Key) => {
