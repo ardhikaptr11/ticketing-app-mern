@@ -46,11 +46,13 @@ const useIconTab = (currentIcon: string) => {
 
     useEffect(() => {
         const tempURL = sessionStorage.getItem("temp_uploaded_icon");
+        const status = sessionStorage.getItem("uploaded_icon_status");
 
-        if (tempURL) {
-            handleDeleteFile(tempURL, () =>
-                sessionStorage.removeItem("temp_uploaded_icon"),
-            );
+        if (tempURL && status !== "saved") {
+            handleDeleteFile(tempURL, () => {
+                sessionStorage.removeItem("temp_uploaded_icon");
+                sessionStorage.removeItem("uploaded_icon_status");
+            });
         }
     }, []);
 
@@ -65,7 +67,9 @@ const useIconTab = (currentIcon: string) => {
         handleUploadFile(files, onChange, (fileURL: string | undefined) => {
             if (fileURL) {
                 setValueUpdateCategoryIcon("icon", fileURL);
+
                 sessionStorage.setItem("temp_uploaded_icon", fileURL);
+                sessionStorage.setItem("uploaded_icon_status", "unsaved");
             }
         });
     };
@@ -77,8 +81,12 @@ const useIconTab = (currentIcon: string) => {
         setIsDeleteDirectly(true);
         handleDeleteFile(fileURL, () => {
             onChange(undefined);
+
             setHasUnsavedChanges(false);
             setIsDeleteDirectly(false);
+
+            sessionStorage.removeItem("temp_uploaded_icon");
+            sessionStorage.removeItem("uploaded_icon_status");
         });
     };
 
@@ -93,8 +101,13 @@ const useIconTab = (currentIcon: string) => {
             typeof newIcon === "string" &&
             oldIcon !== newIcon;
 
-        if (isChanged)
+        sessionStorage.setItem("uploaded_icon_status", "saved");
+
+        if (isChanged) {
             handleDeleteFile(oldIcon, () => onUpdateRef.current?.(data));
+            sessionStorage.removeItem("temp_uploaded_icon");
+            sessionStorage.removeItem("uploaded_icon_status");
+        }
     });
 
     return {
