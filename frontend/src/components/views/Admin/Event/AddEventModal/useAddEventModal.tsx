@@ -1,3 +1,4 @@
+import environment from "@/config/environment";
 import { DELAY } from "@/constants/list.constants";
 import { ToasterContext } from "@/contexts/ToasterContext";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -107,9 +108,27 @@ const addEventSchema = yup.object().shape({
     isFeatured: yup.string().required("Please select one of the options"),
     isOnline: yup.string().required("Please select one of the options"),
     description: yup.string().required("Event description is required"),
-    region: yup.string().required("City is required"),
-    latitude: yup.string().required("Latitude coordinate is required"),
-    longitude: yup.string().required("Longitude coordinate is required"),
+    region: yup.string().when(["isOnline"], ([isOnline], schema) => {
+        return isOnline === "false"
+            ? schema.required("City is required")
+            : schema.notRequired();
+    }),
+    latitude: yup
+        .string()
+        .when(["isOnline", "region"], ([isOnline, region], schema) => {
+            if (isOnline === "false" && region !== "") {
+                return schema.required("Latitude coordinate is required");
+            }
+            return schema.notRequired();
+        }),
+    longitude: yup
+        .string()
+        .when(["isOnline", "region"], ([isOnline, region], schema) => {
+            if (isOnline === "false" && region !== "") {
+                return schema.required("Longitude coordinate is required");
+            }
+            return schema.notRequired();
+        }),
     banner: yup.mixed<FileList | string>().required("Banner is required"),
 });
 
@@ -118,7 +137,7 @@ const useAddEventModal = () => {
     const { isReady } = useRouter();
 
     const { setToaster } = useContext(ToasterContext);
-    const debounce  = useDebounce();
+    const debounce = useDebounce();
 
     const {
         handleUploadFile,
@@ -134,32 +153,32 @@ const useAddEventModal = () => {
         reset,
         watch,
         getValues,
-        setValue,
+        setValue: setValueAddEventModal,
         clearErrors,
     } = useForm({
         resolver: yupResolver(addEventSchema),
     });
 
-    const preview = watch("banner");
+    const preview = watch("banner") || "";
     const nameValue = watch("name") || "";
     const slugValue = watch("slug") || "";
+    const isOnline = watch("isOnline") || "";
+
     const startDateValue: DateValue | undefined = watch("startDate");
 
     const fileURL = getValues("banner");
 
     useEffect(() => {
         if (startDateValue)
-            setValue("endDate", startDateValue.add({ hours: 1 }));
+            setValueAddEventModal("endDate", startDateValue.add({ hours: 1 }));
     }, [startDateValue]);
 
     useEffect(() => {
         const slug = generateSlug(nameValue);
-        setValue("slug", slug);
+        setValueAddEventModal("slug", slug);
 
-        if (nameValue !== "") {
-            clearErrors("slug");
-        }
-    }, [nameValue, setValue]);
+        if (nameValue !== "") clearErrors("slug");
+    }, [nameValue, setValueAddEventModal]);
 
     useEffect(() => {
         const tempURL = sessionStorage.getItem("temp_uploaded_banner");
@@ -177,7 +196,7 @@ const useAddEventModal = () => {
     ) => {
         handleUploadFile(files, onChange, (fileURL: string | undefined) => {
             if (fileURL) {
-                setValue("banner", fileURL);
+                setValueAddEventModal("banner", fileURL);
                 sessionStorage.setItem("temp_uploaded_banner", fileURL);
             }
         });
@@ -202,6 +221,10 @@ const useAddEventModal = () => {
         enabled: isReady,
     });
 
+    const handleSearchRegion = (region: string) => {
+        debounce(() => setSearchRegency(region), DELAY);
+    };
+
     const { data: dataRegion } = useQuery({
         queryKey: ["Regions", searchRegency],
         queryFn: () =>
@@ -209,14 +232,36 @@ const useAddEventModal = () => {
         enabled: searchRegency !== "",
     });
 
-    const handleSearchRegion = (region: string) => {
-        debounce(() => setSearchRegency(region), DELAY);
+    const getGeolocation = async (regency: string) => {
+        const { data } = await eventServices.getGeolocationByRegency(regency);
+        const { latitude, longitude } = data.results[0].location;
+
+        return { latitude, longitude };
     };
+
+
+    const { mutate: mutateFetchGeolocation, isPending: isPendingMutateFetchGeolocation} =
+        useMutation({
+            mutationFn: (regency: string) => getGeolocation(regency),
+            onError: (error) => {
+                setToaster({
+                    type: "error",
+                    message: error.message,
+                });
+            },
+            onSuccess: (data) => {
+                setValueAddEventModal("latitude", data.latitude);
+                setValueAddEventModal("longitude", data.longitude);
+                clearErrors(["latitude", "longitude"]);
+            },
+        });
+
+    const handleFetchGeolocation = () => mutateFetchGeolocation(searchRegency);
 
     const addEvent = async (payload: IEvent) => {
         sessionStorage.removeItem("temp_uploaded_banner");
-        const res = await eventServices.addEvent(payload);
 
+        const res = await eventServices.addEvent(payload);
         return res;
     };
 
@@ -254,8 +299,11 @@ const useAddEventModal = () => {
                 ? standardizeDate(data.endDate as DateValue)
                 : "",
             location: {
-                region: `${data.region}`,
-                coordinates: [Number(data.latitude), Number(data.longitude)],
+                region: data.isOnline === "true" ? "0" : `${data.region}`,
+                coordinates:
+                    data.isOnline === "true"
+                        ? [0, 0]
+                        : [Number(data.latitude), Number(data.longitude)],
             },
             banner: data.banner,
         };
@@ -268,18 +316,20 @@ const useAddEventModal = () => {
         dataCategory,
         dataRegion,
         errors,
-        handleSubmitForm,
         handleAddEvent,
         handleDeleteBanner,
+        handleFetchGeolocation,
         handleOnClose,
         handleSearchRegion,
+        handleSubmitForm,
         handleUploadBanner,
+        isPendingMutateFetchGeolocation,
+        isOnline,
         isPendingMutateAddEvent,
         isPendingMutateDeleteFile,
         isPendingMutateUploadFile,
         isSuccessMutateAddEvent,
         preview,
-        reset,
         searchRegency,
         slugValue,
         startDateValue,
