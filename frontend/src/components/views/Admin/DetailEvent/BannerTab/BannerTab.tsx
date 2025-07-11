@@ -137,6 +137,7 @@ const BannerTab = (props: PropTypes) => {
                         className="mt-2 disabled:bg-default-500"
                         disabled={
                             typeof preview !== "string" ||
+                            isPendingUpdate ||
                             isPendingMutateUploadFile ||
                             isPendingMutateDeleteFile
                         }
