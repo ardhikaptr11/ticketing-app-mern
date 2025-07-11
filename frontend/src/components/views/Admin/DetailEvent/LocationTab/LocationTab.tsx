@@ -18,39 +18,35 @@ import { Controller } from "react-hook-form";
 
 interface PropTypes {
     dataDefaultRegion: string;
-    isPendingDefaultRegion: boolean;
     dataEvent: IEventForm;
+    isPendingDefaultRegion: boolean;
     onUpdate: (data: IEventForm) => void;
     isPendingUpdate: boolean;
     isSuccessUpdate: boolean;
 }
 
-const InfoTab = (props: PropTypes) => {
+const LocationTab = (props: PropTypes) => {
     const {
         dataDefaultRegion,
         dataEvent,
-        onUpdate,
         isPendingDefaultRegion,
         isPendingUpdate,
         isSuccessUpdate,
+        onUpdate,
     } = props;
 
     const {
         controlUpdateEventLocation,
+        dataRegion,
         errorsUpdateEventLocation,
-        handleSubmitUpdateEventLocation,
+        handleFetchGeolocation,
         handleSearchRegion,
-        resetUpdateEventLocation,
+        handleSubmitUpdateEventLocation,
+        isPendingMutateFetchGeolocation,
+        isOnline,
         searchRegency,
         setValueUpdateEventLocation,
-        dataRegion,
     } = useLocationTab();
-
-    useEffect(() => {
-        if (isSuccessUpdate) {
-            resetUpdateEventLocation();
-        }
-    }, [isSuccessUpdate]);
 
     useEffect(() => {
         if (dataEvent) {
@@ -60,15 +56,15 @@ const InfoTab = (props: PropTypes) => {
                 `${dataEvent?.location?.region}`,
             );
             setValueUpdateEventLocation(
-                "longitude",
+                "latitude",
                 `${dataEvent?.location?.coordinates[0]}`,
             );
             setValueUpdateEventLocation(
-                "latitude",
+                "longitude",
                 `${dataEvent?.location?.coordinates[1]}`,
             );
         }
-    }, [dataEvent, dataDefaultRegion]);
+    }, [dataEvent, isSuccessUpdate]);
 
     return (
         <Card className="w-full p-4 lg:w-1/2">
@@ -117,107 +113,151 @@ const InfoTab = (props: PropTypes) => {
                         />
                     </Skeleton>
 
-                    <Skeleton
-                        isLoaded={
-                            !!dataEvent?.location?.region &&
-                            !isPendingDefaultRegion
-                        }
-                    >
-                        {!isPendingDefaultRegion ? (
-                            <Controller
-                                name="region"
-                                control={controlUpdateEventLocation}
-                                render={({ field: { onChange, ...field } }) => (
-                                    <Autocomplete
-                                        {...field}
-                                        aria-label="City selection"
-                                        size="md"
-                                        defaultItems={
-                                            dataRegion?.data.data &&
-                                            searchRegency !== ""
-                                                ? dataRegion.data.data
-                                                : []
-                                        }
-                                        defaultInputValue={dataDefaultRegion}
-                                        label="City"
-                                        placeholder="Search city here"
-                                        variant="bordered"
-                                        onInputChange={(search) =>
-                                            handleSearchRegion(search)
-                                        }
-                                        isInvalid={
-                                            errorsUpdateEventLocation.region !==
-                                            undefined
-                                        }
-                                        errorMessage={
-                                            errorsUpdateEventLocation.region
-                                                ?.message
-                                        }
-                                        onSelectionChange={(value) =>
-                                            onChange(value)
-                                        }
-                                    >
-                                        {(regency: IRegency) => (
-                                            <AutocompleteItem
-                                                key={regency.id}
-                                                textValue={regency.name}
+                    {isOnline === "false" && (
+                        <>
+                            <Skeleton
+                                isLoaded={
+                                    !!dataEvent?.location?.region
+                                        ? !isPendingDefaultRegion
+                                        : !dataDefaultRegion
+                                }
+                            >
+                                {!isPendingDefaultRegion ||
+                                !dataDefaultRegion ? (
+                                    <Controller
+                                        name="region"
+                                        control={controlUpdateEventLocation}
+                                        render={({
+                                            field: { onChange, ...field },
+                                        }) => (
+                                            <Autocomplete
+                                                {...field}
+                                                // key={regionId}
+                                                aria-label="City selection"
+                                                size="md"
+                                                defaultItems={
+                                                    dataRegion?.data.data &&
+                                                    searchRegency !== ""
+                                                        ? dataRegion?.data.data
+                                                        : []
+                                                }
+                                                // defaultSelectedKey={regionId}
+                                                defaultInputValue={
+                                                    dataDefaultRegion
+                                                }
+                                                label="City"
+                                                placeholder="Search city here"
+                                                variant="bordered"
+                                                onInputChange={(search) =>
+                                                    handleSearchRegion(search)
+                                                }
+                                                isInvalid={
+                                                    errorsUpdateEventLocation.region !==
+                                                    undefined
+                                                }
+                                                errorMessage={
+                                                    errorsUpdateEventLocation
+                                                        .region?.message
+                                                }
+                                                onSelectionChange={(value) => {
+                                                    value &&
+                                                        (onChange(value),
+                                                        handleFetchGeolocation());
+                                                }}
                                             >
-                                                {regency.name}
-                                            </AutocompleteItem>
+                                                {(regency: IRegency) => (
+                                                    <AutocompleteItem
+                                                        key={`${regency.id}`}
+                                                        textValue={regency.name}
+                                                    >
+                                                        {regency.name}
+                                                    </AutocompleteItem>
+                                                )}
+                                            </Autocomplete>
                                         )}
-                                    </Autocomplete>
+                                    />
+                                ) : (
+                                    <div className="h-14 w-full" />
                                 )}
-                            />
-                        ) : (
-                            <div className="h-14 w-full"></div>
-                        )}
-                    </Skeleton>
+                            </Skeleton>
 
-                    <Skeleton isLoaded={!!dataEvent?.location?.coordinates[0]}>
-                        <Controller
-                            name="latitude"
-                            control={controlUpdateEventLocation}
-                            render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    label="Latitude"
-                                    variant="bordered"
-                                    autoComplete="off"
-                                    isInvalid={
-                                        errorsUpdateEventLocation.latitude !==
-                                        undefined
-                                    }
-                                    errorMessage={
-                                        errorsUpdateEventLocation.latitude
-                                            ?.message
-                                    }
+                            <Skeleton
+                                isLoaded={
+                                    !!dataEvent?.location?.region
+                                        ? !isPendingDefaultRegion
+                                        : !dataDefaultRegion
+                                }
+                            >
+                                <Controller
+                                    name="latitude"
+                                    control={controlUpdateEventLocation}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            label="Latitude"
+                                            variant="bordered"
+                                            autoComplete="off"
+                                            isInvalid={
+                                                errorsUpdateEventLocation.latitude !==
+                                                undefined
+                                            }
+                                            errorMessage={
+                                                errorsUpdateEventLocation
+                                                    .latitude?.message
+                                            }
+                                            endContent={
+                                                isPendingMutateFetchGeolocation && (
+                                                    <Spinner
+                                                        color="danger"
+                                                        size="sm"
+                                                    />
+                                                )
+                                            }
+                                            isReadOnly
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </Skeleton>
+                            </Skeleton>
 
-                    <Skeleton isLoaded={!!dataEvent?.location?.coordinates[1]}>
-                        <Controller
-                            name="longitude"
-                            control={controlUpdateEventLocation}
-                            render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    label="Longitude"
-                                    variant="bordered"
-                                    autoComplete="off"
-                                    isInvalid={
-                                        errorsUpdateEventLocation.longitude !==
-                                        undefined
-                                    }
-                                    errorMessage={
-                                        errorsUpdateEventLocation.longitude
-                                            ?.message
-                                    }
+                            <Skeleton
+                                isLoaded={
+                                    !!dataEvent?.location?.region
+                                        ? !isPendingDefaultRegion
+                                        : !dataDefaultRegion
+                                }
+                            >
+                                <Controller
+                                    name="longitude"
+                                    control={controlUpdateEventLocation}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            label="Longitude"
+                                            variant="bordered"
+                                            autoComplete="off"
+                                            isInvalid={
+                                                errorsUpdateEventLocation.longitude !==
+                                                undefined
+                                            }
+                                            errorMessage={
+                                                errorsUpdateEventLocation
+                                                    .longitude?.message
+                                            }
+                                            endContent={
+                                                isPendingMutateFetchGeolocation && (
+                                                    <Spinner
+                                                        color="danger"
+                                                        size="sm"
+                                                    />
+                                                )
+                                            }
+                                            isReadOnly
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </Skeleton>
+                            </Skeleton>
+                        </>
+                    )}
 
                     <Button
                         type="submit"
@@ -237,4 +277,4 @@ const InfoTab = (props: PropTypes) => {
     );
 };
 
-export default InfoTab;
+export default LocationTab;
