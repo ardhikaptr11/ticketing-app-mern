@@ -15,12 +15,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8765/api",
-      "description": "Development server"
-    },
-    {
       "url": "https://ticketing-app-backend-eight.vercel.app/api",
       "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8765/api",
+      "description": "Development server"
     }
   ],
   "tags": [
@@ -354,24 +354,64 @@
         "description": "",
         "parameters": [
           {
-            "name": "page",
+            "name": "search",
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
             }
           },
           {
             "name": "limit",
             "in": "query",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "default": 10
             }
           },
           {
-            "name": "search",
+            "name": "isFeatured",
             "in": "query",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "boolean",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "isPublished",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "isOnline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [
+                "true",
+                "false"
+              ]
             }
           }
         ],
@@ -813,19 +853,19 @@
         "properties": {
           "name": {
             "type": "string",
-            "example": "A name for your event"
+            "example": "A name for the event"
           },
           "banner": {
             "type": "string",
-            "example": "A banner for your event"
+            "example": "A banner for the event"
           },
           "category": {
             "type": "string",
-            "example": "A category for your event (ObjectID)"
+            "example": "A category for the event (ObjectID)"
           },
           "description": {
             "type": "string",
-            "example": "A description for your event"
+            "example": "A description for the event"
           },
           "startDate": {
             "type": "string",
@@ -840,7 +880,7 @@
             "properties": {
               "region": {
                 "type": "string",
-                "example": "Your desired region id"
+                "example": "Region ID"
               },
               "coordinates": {
                 "type": "array",
@@ -851,6 +891,10 @@
                 "items": {
                   "type": "number"
                 }
+              },
+              "address": {
+                "type": "string",
+                "example": "Event address"
               }
             }
           },
@@ -859,6 +903,10 @@
             "example": false
           },
           "isFeatured": {
+            "type": "boolean",
+            "example": false
+          },
+          "isPublished": {
             "type": "boolean",
             "example": false
           }
