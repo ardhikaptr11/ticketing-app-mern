@@ -7,40 +7,52 @@ const Schema = mongoose.Schema;
 
 export const eventDAO = Yup.object({
 	name: Yup.string().required("Event name is required"),
-	description: Yup.string().required("Event description is required"),
-	location: Yup.object().required("Event location is required"),
-	banner: Yup.string().required("Event banner is required"),
+	slug: Yup.string(),
+	category: Yup.string().required("Category is required"),
+	startDate: Yup.string().required("Start date is required"),
+	endDate: Yup.string().required("End date is required"),
+	isPublished: Yup.boolean().required("Publish status is required"),
 	isFeatured: Yup.boolean().required("Featured status is required"),
 	isOnline: Yup.boolean().required("Online status is required"),
-	isPublished: Yup.boolean(),
-	category: Yup.string().required("Category is required"),
-	slug: Yup.string(),
+	description: Yup.string().required("Event description is required"),
+	location: Yup.object()
+		.shape({
+			region: Yup.number().required("Region id is required"),
+			coordinates: Yup.array().required("Location coordinates are required"),
+			address: Yup.string().required("Address is required")
+		})
+		.required("Event location is required"),
+	banner: Yup.string().required("Event banner is required"),
 	createdBy: Yup.string().required("Created by is required"),
 	createdAt: Yup.string(),
-	updatedAt: Yup.string(),
-	startDate: Yup.string().required("Start date is required"),
-	endDate: Yup.string().required("End date is required")
+	updatedAt: Yup.string()
 });
 
-const LocationSchema = new Schema(
-	{
-		region: {
-			type: Schema.Types.Number,
-			required: true
-		},
-		coordinates: {
-			type: [Schema.Types.Number],
-			default: [0, 0]
-		}
+const LocationSchema = new Schema({
+	region: {
+		type: Schema.Types.Number,
+		required: true
 	},
-	{ _id: false }
-);
+	coordinates: {
+		type: [Schema.Types.Number],
+		default: [0, 0]
+	},
+	address: {
+		type: Schema.Types.String,
+		required: true
+	}
+});
 
 const EventSchema = new Schema<Event>(
 	{
 		name: {
 			type: Schema.Types.String,
 			required: true
+		},
+		slug: {
+			type: Schema.Types.String,
+			slug: "name",
+			unique: true
 		},
 		description: {
 			type: Schema.Types.String,
@@ -70,11 +82,6 @@ const EventSchema = new Schema<Event>(
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: "Category"
-		},
-		slug: {
-			type: Schema.Types.String,
-			slug: "name",
-			unique: true
 		},
 		createdBy: {
 			type: Schema.Types.ObjectId,
