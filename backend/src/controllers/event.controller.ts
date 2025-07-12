@@ -20,7 +20,18 @@ export const create = async (req: IReqUser, res: Response, next: NextFunction) =
 
 export const findAll = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
-		const { page = 1, limit = 10, search } = req.query as unknown as IPaginationQuery;
+		const {
+			page = 1,
+			limit = 10,
+			search,
+			isFeatured,
+			isPublished,
+			isOnline
+		} = req.query as unknown as IPaginationQuery;
+
+		if ((typeof page === "string" && !parseInt(page)) || (typeof limit === "string" && !parseInt(limit))) {
+			return response.error(res, { message: "Invalid query parameters", status: 400 });
+		}
 
 		const query: FilterQuery<Yup.InferType<typeof eventDAO>> = {};
 
@@ -33,9 +44,21 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 			});
 		}
 
+		if (isFeatured !== undefined) {
+			query.isFeatured = isFeatured === "true";
+		}
+
+		if (isPublished !== undefined) {
+			query.isPublished = isPublished === "true";
+		}
+
+		if (isOnline !== undefined) {
+			query.isOnline = isOnline === "true";
+		}
+
 		const result = await EventModel.find(query)
-			.limit(limit)
-			.skip((page - 1) * limit)
+			.limit(+limit)
+			.skip((+page - 1) * +limit)
 			.sort({ createdAt: -1 })
 			.exec();
 
@@ -46,8 +69,8 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 			result,
 			{
 				total: count,
-				totalPages: Math.ceil(count / limit),
-				current: page
+				totalPages: Math.ceil(count / +limit),
+				current: +page
 			},
 			"Success get all events"
 		);
