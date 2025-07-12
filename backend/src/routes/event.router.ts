@@ -28,6 +28,36 @@ router.get(
 	findAll
 	/**
 	  #swagger.tags = ["Events"]
+    #swagger.parameters['page'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      default: 1
+    }
+    #swagger.parameters['limit'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      default: 10
+    }
+	  #swagger.parameters['isFeatured'] = {
+		  in: 'query',
+		  required: false,
+		  type: 'boolean',
+		  enum: ['true', 'false']
+	  }
+	  #swagger.parameters['isPublished'] = {
+		  in: 'query',
+		  required: false,
+		  type: 'boolean',
+		  enum: ['true', 'false']
+	  }
+	  #swagger.parameters['isOnline'] = {
+		  in: 'query',
+		  required: false,
+		  type: 'boolean',
+		  enum: ['true', 'false']
+	  }
 	 */
 );
 router.get(
