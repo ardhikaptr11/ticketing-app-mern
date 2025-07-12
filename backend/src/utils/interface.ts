@@ -38,6 +38,9 @@ export interface IPaginationQuery {
 	page: number;
 	limit: number;
 	search?: string;
+	isFeatured?: string;
+	isPublished?: string;
+	isOnline?: string;
 }
 
 export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
