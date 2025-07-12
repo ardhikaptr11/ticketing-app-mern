@@ -76,18 +76,20 @@ const doc = {
 				icons: "Icon URL or base64 string"
 			},
 			CreateEventRequest: {
-				name: "A name for your event",
-				banner: "A banner for your event",
-				category: "A category for your event (ObjectID)",
-				description: "A description for your event",
+				name: "A name for the event",
+				banner: "A banner for the event",
+				category: "A category for the event (ObjectID)",
+				description: "A description for the event",
 				startDate: "yyyy-mm-dd hh:mm:ss",
 				endDate: "yyyy-mm-dd hh:mm:ss",
 				location: {
-					region: "Your desired region id",
-					coordinates: [0, 0]
+					region: "Region ID",
+					coordinates: [0, 0],
+					address: "Event address"
 				},
 				isOnline: false,
-				isFeatured: false
+				isFeatured: false,
+				isPublished: false
 			},
 			DeleteMediaRequest: {
 				fileURL: "https://example.com/path/to/cloudinary/file.jpg"
