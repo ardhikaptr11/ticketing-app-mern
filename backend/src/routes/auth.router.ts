@@ -13,16 +13,22 @@ router.post(
 	  #swagger.tags = ["Authentication"]
 	  #swagger.requestBody = {
 	    required: true,
-	    schema: {$ref: "#components/schemas/RegisterRequest"}
+	    schema: {
+		  $ref: "#components/schemas/RegisterRequest"
+	    }
 	  }
 	 */
 );
-router.post("/auth/login", login
+router.post(
+	"/auth/login",
+	login
 	/**
 	  #swagger.tags = ["Authentication"]
 	  #swagger.requestBody = {
-		 required: true,
-		 schema: {$ref: "#/components/schemas/LoginRequest"}
+	    required: true,
+	    schema: {
+		  $ref: "#/components/schemas/LoginRequest"
+	    }
 	  }
 	*/
 );
@@ -32,15 +38,21 @@ router.get(
 	me
 	/**
 	  #swagger.tags = ["Authentication"]
-	  #swagger.security = [{ bearerAuth: [] }]
+	  #swagger.security = [{
+	    "bearerAuth": [] 
+	  }]
 	 */
 );
-router.post("/auth/activation", activation
+router.post(
+	"/auth/activation",
+	activation
 	/**
 	  #swagger.tags = ["Authentication"]
 	  #swagger.requestBody = {
-		required: true,
-		schema: {$ref: "#components/schemas/ActivationRequest"}
+	    required: true,
+	    schema: {
+		  $ref: "#components/schemas/ActivationRequest"
+	    }
 	  }
 	 */
 );
