@@ -3,6 +3,8 @@ import * as Yup from "yup";
 
 import { Event } from "../utils/interface";
 
+export const EVENT_MODEL_NAME = "Event";
+
 const Schema = mongoose.Schema;
 
 export const eventDAO = Yup.object({
@@ -108,9 +110,7 @@ const EventSchema = new Schema<Event>(
 	{
 		timestamps: true
 	}
-);
-
-EventSchema.index({ name: "text", description: "text" });
+).index({ name: "text", description: "text" });
 
 EventSchema.pre("save", function () {
 	const event = this;
@@ -119,4 +119,4 @@ EventSchema.pre("save", function () {
 	}
 });
 
-export const EventModel = mongoose.model<Event>("Event", EventSchema);
+export const EventModel = mongoose.model<Event>(EVENT_MODEL_NAME, EventSchema);
