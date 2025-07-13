@@ -15,12 +15,12 @@
   },
   "servers": [
     {
-      "url": "https://ticketing-app-backend-eight.vercel.app/api",
-      "description": "Production server"
-    },
-    {
       "url": "http://localhost:8765/api",
       "description": "Development server"
+    },
+    {
+      "url": "https://ticketing-app-backend-eight.vercel.app/api",
+      "description": "Production server"
     }
   ],
   "tags": [
@@ -35,6 +35,10 @@
     {
       "name": "Events",
       "description": "Event management endpoints"
+    },
+    {
+      "name": "Tickets",
+      "description": "Ticket management endpoints"
     },
     {
       "name": "Media",
@@ -364,54 +368,54 @@
             "name": "page",
             "in": "query",
             "required": false,
+            "default": 1,
             "schema": {
-              "type": "integer",
-              "default": 1
+              "type": "integer"
             }
           },
           {
             "name": "limit",
             "in": "query",
             "required": false,
+            "default": 10,
             "schema": {
-              "type": "integer",
-              "default": 10
+              "type": "integer"
             }
           },
           {
             "name": "isFeatured",
             "in": "query",
             "required": false,
+            "enum": [
+              "true",
+              "false"
+            ],
             "schema": {
-              "type": "boolean",
-              "enum": [
-                "true",
-                "false"
-              ]
+              "type": "boolean"
             }
           },
           {
             "name": "isPublished",
             "in": "query",
             "required": false,
+            "enum": [
+              "true",
+              "false"
+            ],
             "schema": {
-              "type": "boolean",
-              "enum": [
-                "true",
-                "false"
-              ]
+              "type": "boolean"
             }
           },
           {
             "name": "isOnline",
             "in": "query",
             "required": false,
+            "enum": [
+              "true",
+              "false"
+            ],
             "schema": {
-              "type": "boolean",
-              "enum": [
-                "true",
-                "false"
-              ]
+              "type": "boolean"
             }
           }
         ],
@@ -521,6 +525,186 @@
         "parameters": [
           {
             "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tickets": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTicketRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTicketRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTicketRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTicketRequest"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/tickets/{eventId}/events": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "eventId",
             "in": "path",
             "required": true,
             "schema": {
@@ -913,6 +1097,34 @@
         },
         "xml": {
           "name": "CreateEventRequest"
+        }
+      },
+      "CreateTicketRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "A name for the ticket"
+          },
+          "description": {
+            "type": "string",
+            "example": "A description for the ticket"
+          },
+          "events": {
+            "type": "string",
+            "example": "An event the ticket belongs to (ObjectID)"
+          },
+          "price": {
+            "type": "number",
+            "example": 0
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100
+          }
+        },
+        "xml": {
+          "name": "CreateTicketRequest"
         }
       },
       "DeleteMediaRequest": {
