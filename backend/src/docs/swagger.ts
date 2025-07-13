@@ -25,6 +25,10 @@ const doc = {
 			description: "Event management endpoints"
 		},
 		{
+			name: "Tickets",
+			description: "Ticket management endpoints"
+		},
+		{
 			name: "Media",
 			description: "Media management endpoints"
 		},
@@ -91,6 +95,13 @@ const doc = {
 				isFeatured: false,
 				isPublished: false
 			},
+			CreateTicketRequest: {
+				name: "A name for the ticket",
+				description: "A description for the ticket",
+				events: "An event the ticket belongs to (ObjectID)",
+				price: 0,
+				quantity: 100
+			},
 			DeleteMediaRequest: {
 				fileURL: "https://example.com/path/to/cloudinary/file.jpg"
 			}
@@ -103,6 +114,7 @@ const endpointsFiles = [
 	"../routes/auth.router.ts",
 	"../routes/category.router.ts",
 	"../routes/event.router.ts",
+	"../routes/ticket.router.ts",
 	"../routes/media.router.ts",
 	"../routes/region.router.ts"
 ];
