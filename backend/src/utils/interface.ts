@@ -4,6 +4,7 @@ import { MulterError } from "multer";
 import * as Yup from "yup";
 
 import { eventDAO } from "../models/event.model";
+import { ticketDAO } from "../models/ticket.model";
 
 export interface CustomMulterError extends Omit<MulterError, "code"> {
 	code: MulterError["code"] | "MISSING_FIELD_NAME";
@@ -44,6 +45,10 @@ export interface IPaginationQuery {
 }
 
 export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
-	category: ObjectId
+	category: ObjectId;
 	createdBy: ObjectId;
+}
+
+export interface Ticket extends Omit<Yup.InferType<typeof ticketDAO>, "events"> {
+	events: ObjectId;
 }
