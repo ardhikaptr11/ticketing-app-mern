@@ -62,13 +62,13 @@ export default {
 		}
 
 		if ((error as any)?.code) {
-			const _err = error as any;
+			const err = error as any;
 			return res.status(status).json({
 				meta: {
 					status,
-					message: _err.errorResponse.errmsg
+					message: err.errorResponse.errmsg
 				},
-				data: _err
+				data: err
 			});
 		}
 
