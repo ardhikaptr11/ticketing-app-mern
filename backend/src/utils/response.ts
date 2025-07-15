@@ -24,7 +24,7 @@ export default {
 	},
 	error(res: Response, { message, status = 500 }: { message: string; status?: number }, error?: unknown) {
 		if (error instanceof TokenExpiredError) {
-			return this.authError(res, 401, "JWT is no longer valid");
+			return this.authError(res, 401, "Session expired, please login again");
 		}
 
 		if (error instanceof ValidationError) {
