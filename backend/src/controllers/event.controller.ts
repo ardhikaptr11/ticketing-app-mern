@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, isValidObjectId } from "mongoose";
 import * as Yup from "yup";
 
 import { eventDAO, EventModel } from "../models/event.model";
@@ -83,7 +83,13 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 export const findOne = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id)) return response.error(res, { message: "Event not found", status: 404 });
+
 		const result = await EventModel.findById(id);
+
+		if (!result) return response.error(res, { message: "Event not found", status: 404 });
+
 		response.success(res, result, "Success get one event");
 	} catch (error: any) {
 		error.message = "Failed to get one event";
@@ -94,6 +100,10 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 export const update = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to update event. Event not found", status: 404 });
+
 		const result = await EventModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Event successfully updated");
 	} catch (error: any) {
@@ -105,6 +115,10 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 export const remove = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to delete event. Event not found", status: 404 });
+
 		const result = await EventModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Event successfully deleted");
 	} catch (error: any) {

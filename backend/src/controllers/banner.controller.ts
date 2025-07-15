@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, isValidObjectId } from "mongoose";
 import * as Yup from "yup";
 
 import { IPaginationQuery, IReqUser } from "../utils/interface";
@@ -57,7 +57,13 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 export const findOne = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id)) return response.error(res, { message: "Banner not found", status: 404 });
+
 		const result = await BannerModel.findById(id);
+
+		if (!result) return response.error(res, { message: "Banner not found", status: 404 });
+
 		response.success(res, result, "Success get one banner");
 	} catch (error: any) {
 		error.message = "Failed to get one banner";
@@ -67,6 +73,10 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 export const update = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to update banner. Banner not found", status: 404 });
+
 		const result = await BannerModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Banner successfully updated");
 	} catch (error: any) {
@@ -77,6 +87,10 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 export const remove = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to delete banner. Banner not found", status: 404 });
+
 		const result = await BannerModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Banner successfully deleted");
 	} catch (error: any) {

@@ -1,4 +1,6 @@
 import { NextFunction, Response } from "express";
+import { isValidObjectId } from "mongoose";
+
 import { IPaginationQuery, IReqUser } from "../utils/interface";
 import { categoryDAO, CategoryModel } from "../models/category.model";
 import response from "../utils/response";
@@ -55,7 +57,13 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 export const findOne = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id)) return response.error(res, { message: "Category not found", status: 404 });
+
 		const result = await CategoryModel.findById(id);
+
+		if (!result) return response.error(res, { message: "Category not found", status: 404 });
+
 		response.success(res, result, "Success find one category");
 	} catch (error: any) {
 		error.message = "Failed to find one category";
@@ -66,6 +74,10 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 export const update = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to update category. Category not found", status: 404 });
+
 		const result = await CategoryModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Category successfully updated");
 	} catch (error: any) {
@@ -77,6 +89,10 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 export const remove = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to delete category. Category not found", status: 404 });
+
 		const result = await CategoryModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Category successfully deleted");
 	} catch (error: any) {

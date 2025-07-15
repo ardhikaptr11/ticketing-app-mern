@@ -60,7 +60,13 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 export const findOne = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id)) return response.error(res, { message: "Ticket not found", status: 404 });
+
 		const result = await TicketModel.findById(id);
+
+		if (!result) return response.error(res, { message: "Ticket not found", status: 404 });
+
 		response.success(res, result, "Success get one ticket");
 	} catch (error: any) {
 		error.message = "Failed to get one ticket";
@@ -71,6 +77,10 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 export const update = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to update ticket. Ticket not found", status: 404 });
+
 		const result = await TicketModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Ticket successfully updated");
 	} catch (error: any) {
@@ -82,6 +92,10 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 export const remove = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
+
+		if (!isValidObjectId(id))
+			return response.error(res, { message: "Failed to delete ticket. Ticket not found", status: 404 });
+
 		const result = await TicketModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Ticket successfully deleted");
 	} catch (error: any) {
