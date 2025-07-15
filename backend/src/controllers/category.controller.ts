@@ -78,9 +78,9 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 	try {
 		const { id } = req.params;
 		const result = await CategoryModel.findByIdAndDelete(id, { new: true });
-		response.success(res, result, "Category successfully removed");
+		response.success(res, result, "Category successfully deleted");
 	} catch (error: any) {
-		error.message = "Failed to remove category";
+		error.message = "Failed to delete category";
 		next(error);
 	}
 };

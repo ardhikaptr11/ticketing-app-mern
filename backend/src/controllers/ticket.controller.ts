@@ -85,7 +85,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const result = await TicketModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Ticket successfully deleted");
 	} catch (error: any) {
-		error.message = "Failed to remove one ticket";
+		error.message = "Failed to delete one ticket";
 		next(error);
 	}
 };

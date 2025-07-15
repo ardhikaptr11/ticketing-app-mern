@@ -108,7 +108,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const result = await EventModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Event successfully deleted");
 	} catch (error: any) {
-		error.message = "Failed to remove one event";
+		error.message = "Failed to delete one event";
 		next(error);
 	}
 };
