@@ -67,9 +67,9 @@ export const getVillage = async (req: Request, res: Response, next: NextFunction
 		next(error);
 	}
 };
-export const getGeolocationByCity = async (req: Request, res: Response, next: NextFunction) => {
+export const getGeolocationByRegency = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { regency } = req.params;
+		const { regency } = req.query;
 
 		const result = await axios.get(
 			`${GOOGLE_GEOCODE_API_URL}/${encodeURIComponent(regency as string)}?key=${GOOGLE_API_KEY}`
