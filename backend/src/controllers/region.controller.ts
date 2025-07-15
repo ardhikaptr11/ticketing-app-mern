@@ -69,10 +69,10 @@ export const getVillage = async (req: Request, res: Response, next: NextFunction
 };
 export const getGeolocationByCity = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { name } = req.params;
+		const { regency } = req.params;
 
 		const result = await axios.get(
-			`${GOOGLE_GEOCODE_API_URL}/${encodeURIComponent(name as string)}?key=${GOOGLE_API_KEY}`
+			`${GOOGLE_GEOCODE_API_URL}/${encodeURIComponent(regency as string)}?key=${GOOGLE_API_KEY}`
 		);
 
 		response.success(res, result.data, "Geolocation successfully retrieved");
