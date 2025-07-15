@@ -10,13 +10,7 @@ import {
 	EMAIL_SMTP_HOST,
 	EMAIL_SMTP_SERVICE
 } from "../env";
-
-export interface ISendMail {
-	from: string;
-	to: string;
-	subject: string;
-	html: string;
-}
+import { ISendMail, MockTransporter, SendEmailOptions } from "../interface";
 
 let transporter;
 
@@ -36,15 +30,6 @@ try {
 	transporter = nodemailer.createTransport(config);
 } catch (error) {
 	console.error("Email transporter failed to create:", error);
-
-	interface SendEmailOptions extends ISendMail {
-		[key: string]: any;
-	}
-
-	interface MockTransporter {
-		sendMail: (options: SendEmailOptions) => Promise<{ id: string; response: string }>;
-		verify: () => Promise<boolean>;
-	}
 
 	transporter = {
 		sendMail: (options: SendEmailOptions): Promise<{ id: string; response: string }> => {
