@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import response from "../utils/response";
 import { RegionModel } from "../models/region.model";
+import axios from "axios";
+import { GOOGLE_API_KEY, GOOGLE_GEOCODE_API_URL } from "../utils/env";
 
 export const findByCity = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -62,6 +64,20 @@ export const getVillage = async (req: Request, res: Response, next: NextFunction
 		response.success(res, result, "Success get villages");
 	} catch (error: any) {
 		error.message = "Failed to get village";
+		next(error);
+	}
+};
+export const getGeolocationByCity = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const { name } = req.params;
+
+		const result = await axios.get(
+			`${GOOGLE_GEOCODE_API_URL}/${encodeURIComponent(name as string)}?key=${GOOGLE_API_KEY}`
+		);
+
+		response.success(res, result.data, "Geolocation successfully retrieved");
+	} catch (error: any) {
+		error.message = "Failed to get geolocation for the city";
 		next(error);
 	}
 };
