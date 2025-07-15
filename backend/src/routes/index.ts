@@ -5,10 +5,11 @@ import categoryRouter from "./category.router";
 import regionRouter from "./region.router";
 import eventRouter from "./event.router";
 import ticketRouter from "./ticket.router";
+import bannerRouter from "./banner.router";
 
 const router = express.Router();
 
-const routes = [authRouter, mediaRouter, categoryRouter, regionRouter, eventRouter, ticketRouter];
+const routes = [authRouter, mediaRouter, categoryRouter, regionRouter, eventRouter, ticketRouter, bannerRouter];
 
 routes.forEach((route) => {
 	router.use("/api", route);
