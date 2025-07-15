@@ -234,7 +234,7 @@ const useAddEventModal = () => {
 
     const getGeolocation = async (regency: string) => {
         const { data } = await eventServices.getGeolocationByRegency(regency);
-        const { latitude, longitude } = data.results[0].location;
+        const { latitude, longitude } = data.data.results[0].location;
 
         return { latitude, longitude };
     };
