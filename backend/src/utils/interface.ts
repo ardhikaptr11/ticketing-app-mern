@@ -45,6 +45,22 @@ export interface IPaginationQuery {
 	isOnline?: string;
 }
 
+export interface ISendMail {
+	from: string;
+	to: string;
+	subject: string;
+	html: string;
+}
+
+export interface SendEmailOptions extends ISendMail {
+	[key: string]: any;
+}
+
+export interface MockTransporter {
+	sendMail: (options: SendEmailOptions) => Promise<{ id: string; response: string }>;
+	verify: () => Promise<boolean>;
+}
+
 export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
 	category: ObjectId;
 	createdBy: ObjectId;
@@ -54,4 +70,4 @@ export interface Ticket extends Omit<Yup.InferType<typeof ticketDAO>, "events"> 
 	events: ObjectId;
 }
 
-export interface Banner extends Yup.InferType<typeof bannerDAO>{}
+export interface Banner extends Yup.InferType<typeof bannerDAO> {}
