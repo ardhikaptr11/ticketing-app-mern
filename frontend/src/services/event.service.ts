@@ -1,8 +1,6 @@
 import instance from "@/libs/axios/instance";
 import endpoint from "./endpoint.constant";
 import { IEvent } from "@/types/Event";
-import axios from "axios";
-import environment from "@/config/environment";
 
 const eventServices = {
     getEvents: (params?: string) => instance.get(`${endpoint.EVENT}?${params}`),
@@ -15,10 +13,8 @@ const eventServices = {
         instance.get(`${endpoint.REGION}-search?name=${name}`),
     getRegencyById: (id: string) =>
         instance.get(`${endpoint.REGION}/${id}/regency`),
-    getGeolocationByRegency: (name: string) =>
-        axios.get(
-            `${environment.GEOCODING_API_URL}/${encodeURIComponent(name)}?key=${environment.GOOGLE_API_KEY}`,
-        ),
+    getGeolocationByRegency: (regency: string) =>
+        instance.get(`${endpoint.REGION}/geolocation?regency=${regency}`),
 };
 
 export default eventServices;
