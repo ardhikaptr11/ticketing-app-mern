@@ -5,6 +5,7 @@ import * as Yup from "yup";
 
 import { eventDAO } from "../models/event.model";
 import { ticketDAO } from "../models/ticket.model";
+import { bannerDAO } from "../models/banner.model";
 
 export interface CustomMulterError extends Omit<MulterError, "code"> {
 	code: MulterError["code"] | "MISSING_FIELD_NAME";
@@ -52,3 +53,5 @@ export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" |
 export interface Ticket extends Omit<Yup.InferType<typeof ticketDAO>, "events"> {
 	events: ObjectId;
 }
+
+export interface Banner extends Yup.InferType<typeof bannerDAO>{}
