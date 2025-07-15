@@ -1,3 +1,4 @@
+import { name } from "ejs";
 import swaggerAutogen from "swagger-autogen";
 
 const doc = {
@@ -27,6 +28,10 @@ const doc = {
 		{
 			name: "Tickets",
 			description: "Ticket management endpoints"
+		},
+		{
+			name: "Banners",
+			description: "Banner management endpoints"
 		},
 		{
 			name: "Media",
@@ -102,6 +107,11 @@ const doc = {
 				price: 0,
 				quantity: 100
 			},
+			CreateBannerRequest: {
+				title: "Title of the banner",
+				image: "Image URL",
+				isShow: true
+			},
 			DeleteMediaRequest: {
 				fileURL: "https://example.com/path/to/cloudinary/file.jpg"
 			}
@@ -115,6 +125,7 @@ const endpointsFiles = [
 	"../routes/category.router.ts",
 	"../routes/event.router.ts",
 	"../routes/ticket.router.ts",
+	"../routes/banner.router.ts",
 	"../routes/media.router.ts",
 	"../routes/region.router.ts"
 ];
