@@ -3,7 +3,7 @@ import {
 	findByCity,
 	getAllProvinces,
 	getDistrict,
-	getGeolocationByCity,
+	getGeolocationByRegency,
 	getProvince,
 	getRegency,
 	getVillage
@@ -54,8 +54,8 @@ router.get(
 	 */
 );
 router.get(
-	"/regions/:regency/geolocation",
-	getGeolocationByCity
+	"/regions/geolocation",
+	getGeolocationByRegency
 	/**
 	  #swagger.tags = ["Regions"]
 	 */
