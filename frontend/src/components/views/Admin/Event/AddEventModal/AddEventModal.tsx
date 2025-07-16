@@ -338,6 +338,26 @@ const AddEventModal = (props: PropTypes) => {
                                     </p>
                                     <div className="mb-4 flex flex-col gap-4">
                                         <Controller
+                                            name="address"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Input
+                                                    {...field}
+                                                    label="Address"
+                                                    variant="bordered"
+                                                    autoComplete="off"
+                                                    isInvalid={
+                                                        errors.address !==
+                                                        undefined
+                                                    }
+                                                    errorMessage={
+                                                        errors.address?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+
+                                        <Controller
                                             name="region"
                                             control={control}
                                             render={({
