@@ -121,6 +121,7 @@ const useDetailEvent = () => {
         const payload = {
             isOnline: data.isOnline === "true" ? true : false,
             location: {
+                address: data.isOnline === "true" ? "" : `${data.address}`,
                 region: data.isOnline === "true" ? "0" : `${data.region}`,
                 coordinates:
                     data.isOnline === "true"
@@ -134,6 +135,7 @@ const useDetailEvent = () => {
         const prevData = {
             isOnline: event.isOnline,
             location: {
+                address: event.location.address,
                 region: `${event.location.region}`,
                 coordinates: [
                     event.location.coordinates[0],
@@ -145,6 +147,7 @@ const useDetailEvent = () => {
         const isEqual = inputToCompare.every((item) => {
             if (item === "location") {
                 return (
+                    payload[item].address === prevData[item].address &&
                     payload[item].region === prevData[item].region &&
                     payload[item].coordinates[0] ===
                         prevData[item].coordinates[0] &&
