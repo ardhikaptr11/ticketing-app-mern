@@ -108,6 +108,11 @@ const addEventSchema = yup.object().shape({
     isFeatured: yup.string().required("Please select one of the options"),
     isOnline: yup.string().required("Please select one of the options"),
     description: yup.string().required("Event description is required"),
+    address: yup.string().when(["isOnline"], ([isOnline], schema) => {
+        return isOnline === "false"
+            ? schema.required("Address is required")
+            : schema.notRequired();
+    }),
     region: yup.string().when(["isOnline"], ([isOnline], schema) => {
         return isOnline === "false"
             ? schema.required("City is required")
@@ -239,22 +244,23 @@ const useAddEventModal = () => {
         return { latitude, longitude };
     };
 
-
-    const { mutate: mutateFetchGeolocation, isPending: isPendingMutateFetchGeolocation} =
-        useMutation({
-            mutationFn: (regency: string) => getGeolocation(regency),
-            onError: (error) => {
-                setToaster({
-                    type: "error",
-                    message: error.message,
-                });
-            },
-            onSuccess: (data) => {
-                setValueAddEventModal("latitude", data.latitude);
-                setValueAddEventModal("longitude", data.longitude);
-                clearErrors(["latitude", "longitude"]);
-            },
-        });
+    const {
+        mutate: mutateFetchGeolocation,
+        isPending: isPendingMutateFetchGeolocation,
+    } = useMutation({
+        mutationFn: (regency: string) => getGeolocation(regency),
+        onError: (error) => {
+            setToaster({
+                type: "error",
+                message: error.message,
+            });
+        },
+        onSuccess: (data) => {
+            setValueAddEventModal("latitude", data.latitude);
+            setValueAddEventModal("longitude", data.longitude);
+            clearErrors(["latitude", "longitude"]);
+        },
+    });
 
     const handleFetchGeolocation = () => mutateFetchGeolocation(searchRegency);
 
@@ -299,6 +305,7 @@ const useAddEventModal = () => {
                 ? standardizeDate(data.endDate as DateValue)
                 : "",
             location: {
+                address: data.isOnline === "true" ? "online" : `${data.address}`,
                 region: data.isOnline === "true" ? "0" : `${data.region}`,
                 coordinates:
                     data.isOnline === "true"
