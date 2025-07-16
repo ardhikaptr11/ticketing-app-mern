@@ -52,6 +52,10 @@ const LocationTab = (props: PropTypes) => {
         if (dataEvent) {
             setValueUpdateEventLocation("isOnline", `${dataEvent?.isOnline}`);
             setValueUpdateEventLocation(
+                "address",
+                `${dataEvent?.location?.address}`,
+            );
+            setValueUpdateEventLocation(
                 "region",
                 `${dataEvent?.location?.region}`,
             );
@@ -115,6 +119,29 @@ const LocationTab = (props: PropTypes) => {
 
                     {isOnline === "false" && (
                         <>
+                            <Skeleton isLoaded={!!dataEvent?.location?.address}>
+                                <Controller
+                                    name="address"
+                                    control={controlUpdateEventLocation}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            label="Address"
+                                            variant="bordered"
+                                            autoComplete="off"
+                                            isInvalid={
+                                                errorsUpdateEventLocation.address !==
+                                                undefined
+                                            }
+                                            errorMessage={
+                                                errorsUpdateEventLocation
+                                                    .address?.message
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Skeleton>
+
                             <Skeleton
                                 isLoaded={
                                     !!dataEvent?.location?.region
@@ -141,7 +168,6 @@ const LocationTab = (props: PropTypes) => {
                                                         ? dataRegion?.data.data
                                                         : []
                                                 }
-                                                // defaultSelectedKey={regionId}
                                                 defaultInputValue={
                                                     dataDefaultRegion
                                                 }
