@@ -11,13 +11,13 @@ const useDeleteEventModal = () => {
 
     const deleteEventAndFile = async ({
         id,
-        icon,
+        banner,
     }: {
         id: string;
-        icon: string;
+        banner: string;
     }) => {
         await eventServices.deleteEvent(id);
-        await uploadServices.deleteFile({ fileURL: icon });
+        await uploadServices.deleteFile({ fileURL: banner });
     };
 
     const {
