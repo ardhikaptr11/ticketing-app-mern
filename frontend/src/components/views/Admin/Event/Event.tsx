@@ -17,8 +17,8 @@ const Event = () => {
         isLoadingEvents,
         isRefetchingEvents,
         refetchEvents,
-        selectedIcon,
-        setSelectedIcon,
+        selectedBanner,
+        setSelectedBanner,
         selectedId,
         setSelectedId,
     } = useEvent();
@@ -62,6 +62,7 @@ const Event = () => {
                             }
                             onPressButtonDelete={() => {
                                 setSelectedId(`${event._id}`);
+                                setSelectedBanner(`${event.banner}`);
                                 deleteEventModal.onOpen();
                             }}
                         />
@@ -92,8 +93,8 @@ const Event = () => {
                 refetchEvents={refetchEvents}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
-                selectedIcon={selectedIcon}
-                setSelectedIcon={setSelectedIcon}
+                selectedBanner={selectedBanner}
+                setSelectedBanner={setSelectedBanner}
                 {...deleteEventModal}
             />
         </section>
