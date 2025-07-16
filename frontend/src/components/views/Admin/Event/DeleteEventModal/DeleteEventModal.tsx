@@ -17,8 +17,8 @@ interface PropTypes {
     refetchEvents: () => void;
     selectedId: string;
     setSelectedId: Dispatch<SetStateAction<string>>;
-    selectedIcon: string;
-    setSelectedIcon: Dispatch<SetStateAction<string>>;
+    selectedBanner: string;
+    setSelectedBanner: Dispatch<SetStateAction<string>>;
 }
 
 const DeleteEventModal = (props: PropTypes) => {
@@ -29,8 +29,8 @@ const DeleteEventModal = (props: PropTypes) => {
         refetchEvents,
         selectedId,
         setSelectedId,
-        selectedIcon,
-        setSelectedIcon,
+        selectedBanner,
+        setSelectedBanner,
     } = props;
 
     const {
@@ -67,7 +67,7 @@ const DeleteEventModal = (props: PropTypes) => {
                         onPress={() => {
                             onClose();
                             setSelectedId("");
-                            setSelectedIcon("");
+                            setSelectedBanner("");
                         }}
                         disabled={isPendingMutateDeleteEvent}
                     >
@@ -81,7 +81,7 @@ const DeleteEventModal = (props: PropTypes) => {
                         onPress={() =>
                             mutateDeleteEvent({
                                 id: selectedId,
-                                icon: selectedIcon,
+                                banner: selectedBanner,
                             })
                         }
                     >
