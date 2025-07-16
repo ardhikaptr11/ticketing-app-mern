@@ -7,10 +7,10 @@ import eventServices from "@/services/event.service";
 import { useDebounce } from "@/hooks/useDebounce";
 import { DELAY } from "@/constants/list.constants";
 import { ToasterContext } from "@/contexts/ToasterContext";
-import { useRouter } from "next/router";
 
 const schemaUpdateEventLocation = yup.object().shape({
     isOnline: yup.string().required("Location is required"),
+    address: yup.string().required("Address is required"),
     region: yup.string().required("Region is required"),
     longitude: yup.string().required("Longitude is required"),
     latitude: yup.string().required("Latitude is required"),
@@ -18,10 +18,7 @@ const schemaUpdateEventLocation = yup.object().shape({
 
 const useLocationTab = () => {
     const [searchRegency, setSearchRegency] = useState("");
-
-    const { isReady } = useRouter();
     const { setToaster } = useContext(ToasterContext);
-
     const debounce = useDebounce();
 
     const {
