@@ -19,7 +19,7 @@ const DetailEvent = () => {
         isSuccessMutateUpdateEventInfo,
     } = useDetailEvent();
 
-    const disabledTabs = hasUnsavedChanges ? ["info", "location"] : [];
+    const disabledTabs = hasUnsavedChanges || isPendingDefaultRegion ? ["info", "location"] : [];
 
     return (
         <Tabs aria-label="Options" disabledKeys={disabledTabs}>
