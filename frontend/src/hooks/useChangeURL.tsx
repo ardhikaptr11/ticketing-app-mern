@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useDebounce } from "./useDebounce";
 import { ChangeEvent, useEffect } from "react";
 
-const useChangeURL = (isDisabled: boolean) => {
+const useChangeURL = (isDisabled: boolean = false) => {
 
     const { isReady, push, query, replace } = useRouter();
     const debounce = useDebounce();
