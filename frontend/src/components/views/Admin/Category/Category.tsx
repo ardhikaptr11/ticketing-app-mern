@@ -1,19 +1,12 @@
 import DataTable from "@/components/ui/DataTable";
 import {
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
     useDisclosure,
 } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Key, ReactNode, useCallback } from "react";
-import { IoTrashOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { COLUMN_LIST_CATEGORY } from "./Category.constants";
 import { useCategory } from "./useCategory";
-import { SlOptionsVertical } from "react-icons/sl";
 import AddCategoryModal from "./AddCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import DropdownAction from "@/components/commons/DropdownAction";
