@@ -1,17 +1,28 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
-import { useRouter } from "next/router";
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+} from "@heroui/react";
 import { IoInformationCircleOutline, IoTrashOutline } from "react-icons/io5";
+import { LuPencilLine } from "react-icons/lu";
 import { SlOptionsVertical } from "react-icons/sl";
 
-
 interface PropTypes {
-    onPressButtonDetail: () => void;
+    actionType?: string;
+    onPressButtonDetail?: () => void;
     onPressButtonDelete: () => void;
+    onPressButtonUpdate?: () => void;
 }
 
-
 const DropdownAction = (props: PropTypes) => {
-    const { onPressButtonDetail, onPressButtonDelete } = props;
+    const {
+        onPressButtonDetail,
+        onPressButtonDelete,
+        onPressButtonUpdate,
+        actionType = "detail",
+    } = props;
 
     return (
         <Dropdown>
@@ -21,15 +32,25 @@ const DropdownAction = (props: PropTypes) => {
                 </Button>
             </DropdownTrigger>
             <DropdownMenu>
+                {actionType === "detail" ? (
+                    <DropdownItem
+                        key="detail-button"
+                        onPress={onPressButtonDetail}
+                        startContent={<IoInformationCircleOutline />}
+                    >
+                        Detail
+                    </DropdownItem>
+                ) : (
+                    <DropdownItem
+                        key="update-button"
+                        onPress={onPressButtonUpdate}
+                        startContent={<LuPencilLine />}
+                    >
+                        Update
+                    </DropdownItem>
+                )}
                 <DropdownItem
-                    key="detail-category-button"
-                    onPress={onPressButtonDetail}
-                    startContent={<IoInformationCircleOutline />}
-                >
-                    Detail
-                </DropdownItem>
-                <DropdownItem
-                    key="delete-event-button"
+                    key="delete-button"
                     className="text-red-500"
                     startContent={<IoTrashOutline />}
                     onPress={onPressButtonDelete}
@@ -39,6 +60,6 @@ const DropdownAction = (props: PropTypes) => {
             </DropdownMenu>
         </Dropdown>
     );
-}
+};
 
-export default DropdownAction
+export default DropdownAction;
