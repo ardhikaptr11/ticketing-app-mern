@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Tab, Tabs } from "@heroui/react";
+import useDetailEvent from "./useDetailEvent";
 import BannerTab from "./BannerTab";
 import InfoTab from "./InfoTab";
-import useDetailEvent from "./useDetailEvent";
 import LocationTab from "./LocationTab";
+import TicketTab from "./TicketTab/TicketTab";
 
 const DetailEvent = () => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -19,7 +20,10 @@ const DetailEvent = () => {
         isSuccessMutateUpdateEventInfo,
     } = useDetailEvent();
 
-    const disabledTabs = hasUnsavedChanges || isPendingDefaultRegion ? ["info", "location"] : [];
+    const disabledTabs =
+        hasUnsavedChanges || (!dataEvent?.isOnline && isPendingDefaultRegion)
+            ? ["info", "location", "ticket"]
+            : [];
 
     return (
         <Tabs aria-label="Options" disabledKeys={disabledTabs}>
@@ -49,6 +53,9 @@ const DetailEvent = () => {
                     isPendingUpdate={isPendingMutateUpdateEventInfo}
                     isSuccessUpdate={isSuccessMutateUpdateEventInfo}
                 />
+            </Tab>
+            <Tab key="ticket" title="Ticket">
+                <TicketTab />
             </Tab>
         </Tabs>
     );
