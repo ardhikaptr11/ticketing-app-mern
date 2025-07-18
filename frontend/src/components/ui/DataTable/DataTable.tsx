@@ -26,19 +26,13 @@ interface PropTypes {
     isLoading?: boolean;
     onClickButtonTopContent?: () => void;
     renderCell: (item: Record<string, unknown>, columnKey: Key) => ReactNode;
+    showSearch?: boolean;
+    showLimit?: boolean;
     totalPages: number;
+    disableChangeURL?: boolean;
 }
 
 const DataTable = (props: PropTypes) => {
-    const {
-        currentLimit,
-        currentPage,
-        handleClearSearch,
-        handleChangePage,
-        handleSearch,
-        handleChangeLimit,
-    } = useChangeURL();
-
     const {
         buttonTopContentLabel,
         columns,
@@ -48,19 +42,33 @@ const DataTable = (props: PropTypes) => {
         onClickButtonTopContent,
         renderCell,
         totalPages,
+        showSearch = true,
+        showLimit = true,
+        disableChangeURL = false,
     } = props;
+
+    const {
+        currentLimit,
+        currentPage,
+        handleClearSearch,
+        handleChangePage,
+        handleSearch,
+        handleChangeLimit,
+    } = useChangeURL(disableChangeURL);
 
     const TopContent = useMemo(
         () => (
             <div className="flex flex-col-reverse items-start justify-between gap-y-4 lg:flex-row lg:items-center">
-                <Input
-                    isClearable
-                    className="w-full sm:max-w-[24%]"
-                    placeholder="Search by name"
-                    startContent={<CiSearch />}
-                    onChange={handleSearch}
-                    onClear={handleClearSearch}
-                />
+                {showSearch && (
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[24%]"
+                        placeholder="Search by name"
+                        startContent={<CiSearch />}
+                        onChange={handleSearch}
+                        onClear={handleClearSearch}
+                    />
+                )}
                 {buttonTopContentLabel && (
                     <Button color="danger" onPress={onClickButtonTopContent}>
                         {buttonTopContentLabel}
@@ -79,20 +87,24 @@ const DataTable = (props: PropTypes) => {
     const BottomContent = useMemo(
         () => (
             <div className="flex items-center justify-center lg:justify-between">
-                <Select
-                    aria-label="Rows per page"
-                    className="hidden max-w-36 lg:block"
-                    size="md"
-                    selectedKeys={[`${currentLimit}`]}
-                    selectionMode="single"
-                    onChange={handleChangeLimit}
-                    startContent={<p className="text-small">Show:</p>}
-                    disallowEmptySelection
-                >
-                    {LIMIT_LISTS.map((item) => (
-                        <SelectItem key={item.value}>{item.label}</SelectItem>
-                    ))}
-                </Select>
+                {showLimit && (
+                    <Select
+                        aria-label="Rows per page"
+                        className="hidden max-w-36 lg:block"
+                        size="md"
+                        selectedKeys={[`${currentLimit}`]}
+                        selectionMode="single"
+                        onChange={handleChangeLimit}
+                        startContent={<p className="text-small">Show:</p>}
+                        disallowEmptySelection
+                    >
+                        {LIMIT_LISTS.map((item) => (
+                            <SelectItem key={item.value}>
+                                {item.label}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                )}
                 {totalPages > 1 && (
                     <Pagination
                         isCompact
@@ -106,7 +118,13 @@ const DataTable = (props: PropTypes) => {
                 )}
             </div>
         ),
-        [currentLimit, currentPage, totalPages, handleChangePage, handleChangeLimit],
+        [
+            currentLimit,
+            currentPage,
+            totalPages,
+            handleChangePage,
+            handleChangeLimit,
+        ],
     );
 
     return (
