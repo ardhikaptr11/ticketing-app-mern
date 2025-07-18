@@ -8,7 +8,8 @@ import { useRouter } from "next/router";
 import { useDebounce } from "./useDebounce";
 import { ChangeEvent, useEffect } from "react";
 
-const useChangeURL = () => {
+const useChangeURL = (isDisabled: boolean) => {
+
     const { isReady, push, query, replace } = useRouter();
     const debounce = useDebounce();
 
@@ -17,7 +18,7 @@ const useChangeURL = () => {
     const currentSearch = query.search;
 
     useEffect(() => {
-        if (isReady) {
+        if (isReady && !isDisabled) {
             if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
                 replace({
                     query: {
