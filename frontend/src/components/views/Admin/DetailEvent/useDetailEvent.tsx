@@ -12,14 +12,14 @@ const useDetailEvent = () => {
     const { query, isReady } = useRouter();
     const { setToaster } = useContext(ToasterContext);
 
-    const getEventById = async (id: string) => {
-        const { data } = await eventServices.getEventById(id);
+    const getEventById = async () => {
+        const { data } = await eventServices.getEventById(`${query.id}`);
         return data.data;
     };
 
     const { data: dataEvent, refetch: refetchEvent } = useQuery({
         queryKey: ["Event"],
-        queryFn: () => getEventById(`${query.id}`),
+        queryFn: getEventById,
         enabled: isReady,
     });
 
@@ -88,7 +88,7 @@ const useDetailEvent = () => {
                 : "",
         };
 
-        const event = await getEventById(`${query.id}`);
+        const event = await getEventById();
 
         const prevData = {
             name: event.name,
@@ -130,7 +130,7 @@ const useDetailEvent = () => {
             },
         };
 
-        const event = await getEventById(`${query.id}`);
+        const event = await getEventById();
 
         const prevData = {
             isOnline: event.isOnline,
