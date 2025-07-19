@@ -58,11 +58,11 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 	try {
 		const { id } = req.params;
 
-		if (!isValidObjectId(id)) return response.error(res, { message: "Banner not found", status: 404 });
+		if (!isValidObjectId(id)) return response.error(res, { message: "Banner not found", status: 404 }, null);
 
 		const result = await BannerModel.findById(id);
 
-		if (!result) return response.error(res, { message: "Banner not found", status: 404 });
+		if (!result) return response.error(res, { message: "Banner not found", status: 404 }, null);
 
 		response.success(res, result, "Success get one banner");
 	} catch (error: any) {
@@ -75,7 +75,7 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to update banner. Banner not found", status: 404 });
+			return response.error(res, { message: "Failed to update banner. Banner not found", status: 404 }, null);
 
 		const result = await BannerModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Banner successfully updated");
@@ -89,7 +89,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to delete banner. Banner not found", status: 404 });
+			return response.error(res, { message: "Failed to delete banner. Banner not found", status: 404 }, null);
 
 		const result = await BannerModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Banner successfully deleted");

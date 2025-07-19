@@ -76,7 +76,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		});
 
 		if (!userByIdentifier) {
-			return response.error(res, { message: "User not found", status: 404 });
+			return response.error(res, { message: "User not found", status: 404 }, null);
 		}
 
 		const isPasswordValid: boolean = encrypt(password) === userByIdentifier.password;

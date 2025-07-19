@@ -61,11 +61,11 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 	try {
 		const { id } = req.params;
 
-		if (!isValidObjectId(id)) return response.error(res, { message: "Ticket not found", status: 404 });
+		if (!isValidObjectId(id)) return response.error(res, { message: "Ticket not found", status: 404 }, null);
 
 		const result = await TicketModel.findById(id);
 
-		if (!result) return response.error(res, { message: "Ticket not found", status: 404 });
+		if (!result) return response.error(res, { message: "Ticket not found", status: 404 }, null);
 
 		response.success(res, result, "Success get one ticket");
 	} catch (error: any) {
@@ -79,7 +79,7 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to update ticket. Ticket not found", status: 404 });
+			return response.error(res, { message: "Failed to update ticket. Ticket not found", status: 404 }, null);
 
 		const result = await TicketModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Ticket successfully updated");
@@ -94,7 +94,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to delete ticket. Ticket not found", status: 404 });
+			return response.error(res, { message: "Failed to delete ticket. Ticket not found", status: 404 }, null);
 
 		const result = await TicketModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Ticket successfully deleted");
@@ -109,7 +109,7 @@ export const findAllByEvent = async (req: IReqUser, res: Response, next: NextFun
 		const { eventId } = req.params;
 
 		if (!isValidObjectId(eventId)) {
-			return response.error(res, { message: "Tickets not found", status: 404 });
+			return response.error(res, { message: "Tickets not found", status: 404 }, null);
 		}
 
 		const result = await TicketModel.find({ events: eventId }).exec();

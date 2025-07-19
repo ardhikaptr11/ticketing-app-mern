@@ -58,11 +58,11 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 	try {
 		const { id } = req.params;
 
-		if (!isValidObjectId(id)) return response.error(res, { message: "Category not found", status: 404 });
+		if (!isValidObjectId(id)) return response.error(res, { message: "Category not found", status: 404 }, null);
 
 		const result = await CategoryModel.findById(id);
 
-		if (!result) return response.error(res, { message: "Category not found", status: 404 });
+		if (!result) return response.error(res, { message: "Category not found", status: 404 }, null);
 
 		response.success(res, result, "Success find one category");
 	} catch (error: any) {
@@ -76,7 +76,7 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to update category. Category not found", status: 404 });
+			return response.error(res, { message: "Failed to update category. Category not found", status: 404 }, null);
 
 		const result = await CategoryModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Category successfully updated");
@@ -91,7 +91,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to delete category. Category not found", status: 404 });
+			return response.error(res, { message: "Failed to delete category. Category not found", status: 404 }, null);
 
 		const result = await CategoryModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Category successfully deleted");
