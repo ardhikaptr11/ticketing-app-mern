@@ -34,6 +34,10 @@ const doc = {
 			description: "Banner management endpoints"
 		},
 		{
+			name: "Orders",
+			description: "Order management endpoints"
+		},
+		{
 			name: "Media",
 			description: "Media management endpoints"
 		},
@@ -112,6 +116,11 @@ const doc = {
 				image: "Image URL",
 				isShow: true
 			},
+			CreateOrderRequest: {
+				ticket: "A ticket the order is for (ObjectID)",
+				quantity: 2,
+				events: "An event the order is for (ObjectID)",
+			},
 			DeleteMediaRequest: {
 				fileURL: "https://example.com/path/to/cloudinary/file.jpg"
 			}
@@ -126,6 +135,7 @@ const endpointsFiles = [
 	"../routes/event.router.ts",
 	"../routes/ticket.router.ts",
 	"../routes/banner.router.ts",
+	"../routes/order.router.ts",
 	"../routes/media.router.ts",
 	"../routes/region.router.ts"
 ];
