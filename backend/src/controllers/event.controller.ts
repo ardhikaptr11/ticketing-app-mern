@@ -20,46 +20,37 @@ export const create = async (req: IReqUser, res: Response, next: NextFunction) =
 
 export const findAll = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
-		const {
-			page = 1,
-			limit = 10,
+		const { page = 1, limit = 10, search, category, isFeatured, isPublished, isOnline } = req.query;
+
+		const buildQuery = (filter: any) => {
+			const query: FilterQuery<Yup.InferType<typeof eventDAO>> = {};
+
+			if (filter.search) query.$text = { $search: filter.search };
+			if (filter.category) query.category = filter.category;
+			if (filter.isFeatured) query.isFeatured = filter.isFeatured;
+			if (filter.isPublished) query.isPublished = filter.isPublished;
+			if (filter.isOnline) query.isOnline = filter.isOnline;
+
+			return query;
+		};
+
+		if ((typeof page === "string" && !parseInt(page)) || (typeof limit === "string" && !parseInt(limit))) {
+			return response.error(res, { message: "Invalid query parameters", status: 400 }, null);
+		}
+
+		const query = buildQuery({
 			search,
+			category,
 			isFeatured,
 			isPublished,
 			isOnline
-		} = req.query as unknown as IPaginationQuery;
-
-		if ((typeof page === "string" && !parseInt(page)) || (typeof limit === "string" && !parseInt(limit))) {
-			return response.error(res, { message: "Invalid query parameters", status: 400 });
-		}
-
-		const query: FilterQuery<Yup.InferType<typeof eventDAO>> = {};
-
-		if (search) {
-			Object.assign(query, {
-				...query,
-				$text: {
-					$search: search
-				}
-			});
-		}
-
-		if (isFeatured !== undefined) {
-			query.isFeatured = isFeatured === "true";
-		}
-
-		if (isPublished !== undefined) {
-			query.isPublished = isPublished === "true";
-		}
-
-		if (isOnline !== undefined) {
-			query.isOnline = isOnline === "true";
-		}
+		});
 
 		const result = await EventModel.find(query)
 			.limit(+limit)
 			.skip((+page - 1) * +limit)
 			.sort({ createdAt: -1 })
+			.lean()
 			.exec();
 
 		const count = await EventModel.countDocuments(query);
@@ -84,11 +75,11 @@ export const findOne = async (req: IReqUser, res: Response, next: NextFunction) 
 	try {
 		const { id } = req.params;
 
-		if (!isValidObjectId(id)) return response.error(res, { message: "Event not found", status: 404 });
+		if (!isValidObjectId(id)) return response.error(res, { message: "Event not found", status: 404 }, null);
 
 		const result = await EventModel.findById(id);
 
-		if (!result) return response.error(res, { message: "Event not found", status: 404 });
+		if (!result) return response.error(res, { message: "Event not found", status: 404 }, null);
 
 		response.success(res, result, "Success get one event");
 	} catch (error: any) {
@@ -102,7 +93,7 @@ export const update = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to update event. Event not found", status: 404 });
+			return response.error(res, { message: "Failed to update event. Event not found", status: 404 }, null);
 
 		const result = await EventModel.findByIdAndUpdate(id, req.body, { new: true });
 		response.success(res, result, "Event successfully updated");
@@ -117,7 +108,7 @@ export const remove = async (req: IReqUser, res: Response, next: NextFunction) =
 		const { id } = req.params;
 
 		if (!isValidObjectId(id))
-			return response.error(res, { message: "Failed to delete event. Event not found", status: 404 });
+			return response.error(res, { message: "Failed to delete event. Event not found", status: 404 }, null);
 
 		const result = await EventModel.findByIdAndDelete(id, { new: true });
 		response.success(res, result, "Event successfully deleted");
