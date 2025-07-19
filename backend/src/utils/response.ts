@@ -24,7 +24,7 @@ export default {
 	},
 	error(res: Response, { message, status = 500 }: { message: string; status?: number }, error?: unknown) {
 		if (error instanceof TokenExpiredError) {
-			return this.authError(res, 401, "Session expired, please login again");
+			return this.authError(res, 401, "Session expired");
 		}
 
 		if (error instanceof ValidationError) {
