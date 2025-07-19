@@ -5,6 +5,8 @@ import { CLIENT_HOST, EMAIL_SMTP_USER } from "../utils/env";
 import { ROLES } from "../utils/constant";
 import { User } from "../utils/interface";
 
+export const USER_MODEL_NAME = "User";
+
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema<User>(
@@ -102,4 +104,4 @@ UserSchema.methods.toJSON = function () {
 	return user;
 };
 
-export const UserModel = mongoose.model("User", UserSchema);
+export const UserModel = mongoose.model(USER_MODEL_NAME, UserSchema);
