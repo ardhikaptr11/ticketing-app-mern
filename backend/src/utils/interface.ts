@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import { eventDAO } from "../models/event.model";
 import { ticketDAO } from "../models/ticket.model";
 import { bannerDAO } from "../models/banner.model";
+import { orderDAO, TVoucher } from "../models/order.model";
+import { TResponseMidtrans } from "./payment";
 
 export interface CustomMulterError extends Omit<MulterError, "code"> {
 	code: MulterError["code"] | "MISSING_FIELD_NAME";
@@ -61,6 +63,13 @@ export interface MockTransporter {
 	verify: () => Promise<boolean>;
 }
 
+export interface IPayment {
+	transaction_details: {
+		order_id: string;
+		gross_amount: number;
+	};
+}
+
 export interface Event extends Omit<Yup.InferType<typeof eventDAO>, "category" | "createdBy"> {
 	category: ObjectId;
 	createdBy: ObjectId;
@@ -71,3 +80,14 @@ export interface Ticket extends Omit<Yup.InferType<typeof ticketDAO>, "events"> 
 }
 
 export interface Banner extends Yup.InferType<typeof bannerDAO> {}
+
+export interface Order extends Omit<Yup.InferType<typeof orderDAO>, "createdBy" | "events" | "ticket"> {
+	total: number;
+	status: string;
+	payment: TResponseMidtrans;
+	createdBy: ObjectId;
+	events: ObjectId;
+	orderId: string;
+	ticket: ObjectId;
+	vouchers: TVoucher[];
+}
