@@ -3,6 +3,7 @@ import { createContext, ReactNode, useState } from "react";
 interface IToaster {
     type: string;
     message: string;
+    afterLoginSuccess?: boolean;
 }
 
 interface IToasterState {
