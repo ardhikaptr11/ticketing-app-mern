@@ -1,3 +1,4 @@
+import cn from "@/utils/cn";
 import { ReactNode } from "react";
 import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 
@@ -9,22 +10,31 @@ const iconList: { [key: string]: ReactNode } = {
 interface PropTypes {
     type: string;
     message: string;
+    isShowing: boolean;
+    afterLoginSuccess: boolean;
 }
 
 const Toaster = (props: PropTypes) => {
-    const { type, message } = props;
+    const { type, message, isShowing, afterLoginSuccess } = props;
 
     return (
         <div
             role="alert"
             aria-labelledby="toaster-label"
-            className="fixed right-8 top-8 z-50 max-w-xs rounded-xl border-gray-400 bg-white shadow-md"
+            className={cn(
+                "fixed top-8 z-50 max-w-xs rounded-xl border-gray-400 bg-white shadow-md",
+                afterLoginSuccess ? "right-1/2" : "right-8",
+                isShowing ? "animate-toasterIn" : "animate-toasterOut",
+            )}
         >
             <div className="flex items-center gap-2 p-4">
                 {iconList[type]}
                 <p
                     id="toaster-label"
-                    className={`text-sm ${type === "success" ? "text-success-500" : "text-danger-500"}`}
+                    className={cn("text-sm", {
+                        "text-success-500": type === "success",
+                        "text-danger-500": type === "error",
+                    })}
                 >
                     {message}
                 </p>
