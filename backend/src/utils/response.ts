@@ -24,7 +24,7 @@ export default {
 	},
 	error(res: Response, { message, status = 500 }: { message: string; status?: number }, error?: unknown) {
 		if (error instanceof TokenExpiredError) {
-			return this.authError(res, 401, "Session expired");
+			return this.authError(res, 401, "Session expired", error);
 		}
 
 		if (error instanceof ValidationError) {
@@ -62,13 +62,13 @@ export default {
 		}
 
 		if ((error as any)?.code) {
-			const err = error as any;
+			const _err = error as any;
 			return res.status(status).json({
 				meta: {
 					status,
-					message: err.errorResponse.errmsg
+					message: _err.errorResponse.errmsg
 				},
-				data: err
+				data: _err
 			});
 		}
 
@@ -80,13 +80,13 @@ export default {
 			data: error
 		});
 	},
-	authError(res: Response, statusCode: number, message: string = "Unauthorized") {
+	authError(res: Response, statusCode: number, message: string = "Unauthorized", error?: unknown) {
 		res.status(statusCode).json({
 			meta: {
 				status: statusCode,
 				message
 			},
-			data: null
+			data: error || null
 		});
 	},
 	pagination(res: Response, data: any[], pagination: TPagination, message: string) {
