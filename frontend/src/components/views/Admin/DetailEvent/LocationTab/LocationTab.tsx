@@ -13,7 +13,7 @@ import {
 } from "@heroui/react";
 import { Input } from "@heroui/react";
 import useLocationTab from "./useLocationTab";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Controller } from "react-hook-form";
 
 interface PropTypes {
@@ -118,7 +118,7 @@ const LocationTab = (props: PropTypes) => {
                     </Skeleton>
 
                     {isOnline === "false" && (
-                        <>
+                        <Fragment>
                             <Skeleton isLoaded={!!dataEvent?.location?.address}>
                                 <Controller
                                     name="address"
@@ -282,7 +282,7 @@ const LocationTab = (props: PropTypes) => {
                                     )}
                                 />
                             </Skeleton>
-                        </>
+                        </Fragment>
                     )}
 
                     <Button

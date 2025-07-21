@@ -14,7 +14,7 @@ import {
     Spinner,
     Textarea,
 } from "@heroui/react";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import useAddEventModal from "./useAddEventModal";
 import { Controller } from "react-hook-form";
 import InputFile from "@/components/ui/InputFile";
@@ -332,7 +332,7 @@ const AddEventModal = (props: PropTypes) => {
                                 />
                             </div>
                             {isOnline === "false" && (
-                                <>
+                                <Fragment>
                                     <p className="text-sm font-bold">
                                         Location
                                     </p>
@@ -472,7 +472,7 @@ const AddEventModal = (props: PropTypes) => {
                                             )}
                                         />
                                     </div>
-                                </>
+                                </Fragment>
                             )}
                             <p className="text-sm font-bold">Banner</p>
                             <Controller
