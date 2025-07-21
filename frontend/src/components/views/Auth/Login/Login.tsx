@@ -4,8 +4,11 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
 
 import useLogin from "../Login/useLogin";
+import { useRouter } from "next/router";
 
 const Login = () => {
+    const { push } = useRouter();
+
     const {
         isVisible,
         handleVisiblePassword,
@@ -24,6 +27,8 @@ const Login = () => {
                     alt="Logo"
                     width={120}
                     height={120}
+                    className="cursor-pointer"
+                    onClick={() => push("/")}
                 />
                 <Image
                     src="/images/illustrations/login.svg"
@@ -31,6 +36,7 @@ const Login = () => {
                     width={1024}
                     height={1024}
                     className="w-2/3 lg:w-full"
+                    priority
                 />
             </div>
             <Card>

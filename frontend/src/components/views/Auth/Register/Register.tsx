@@ -14,8 +14,11 @@ import { Controller } from "react-hook-form";
 import useRegister from "../Register/useRegister";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const Register = () => {
+    const { push } = useRouter();
+
     const {
         isVisible,
         handleVisiblePassword,
@@ -38,7 +41,8 @@ const Register = () => {
                     alt="Zentix logo"
                     width={120}
                     height={120}
-                    priority
+                    className="cursor-pointer"
+                    onClick={() => push("/")}
                 />
                 <Image
                     src="/images/illustrations/login.svg"
@@ -46,6 +50,7 @@ const Register = () => {
                     width={1024}
                     height={1024}
                     className="w-2/3 lg:w-full"
+                    priority
                 />
             </div>
             <Card>
