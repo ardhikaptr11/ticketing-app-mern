@@ -84,6 +84,7 @@ const useLogin = () => {
             setToaster({
                 type: "success",
                 message: "Login success!",
+                afterLoginSuccess: true,
             });
             router.push(callbackUrl);
         },
