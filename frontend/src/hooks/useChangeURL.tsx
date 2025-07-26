@@ -1,44 +1,40 @@
-import {
-    ALLOWED_LIMITS,
-    DELAY,
-    LIMIT_DEFAULT,
-    PAGE_DEFAULT,
-} from "@/constants/list.constants";
+import { DELAY, LIMIT_DEFAULT, PAGE_DEFAULT } from "@/constants/list.constants";
 import { useRouter } from "next/router";
 import { useDebounce } from "./useDebounce";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 
-const useChangeURL = (isDisabled: boolean = false) => {
-
-    const { isReady, push, query, replace } = useRouter();
+const useChangeURL = () => {
+    const { push, query, replace } = useRouter();
     const debounce = useDebounce();
 
     const currentLimit = query.limit;
     const currentPage = query.page;
     const currentSearch = query.search;
+    const currentCategory = query.category;
+    const currentIsOnline = query.isOnline;
+    const currentIsFeatured = query.isFeatured;
 
-    useEffect(() => {
-        if (isReady && !isDisabled) {
-            if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
-                replace({
-                    query: {
-                        limit: LIMIT_DEFAULT,
-                        page: PAGE_DEFAULT,
-                        search: currentSearch || "",
-                    },
-                });
-                return;
-            }
+    const setUrl = () => {
+        replace({
+            query: {
+                limit: currentLimit || LIMIT_DEFAULT,
+                page: currentPage || PAGE_DEFAULT,
+                search: currentSearch || "",
+            },
+        });
+    };
 
-            replace({
-                query: {
-                    limit: currentLimit || LIMIT_DEFAULT,
-                    page: currentPage || PAGE_DEFAULT,
-                    search: currentSearch || "",
-                },
-            });
-        }
-    }, [isReady]);
+    const setUrlExplore = () => {
+        replace({
+            query: {
+                limit: currentLimit || LIMIT_DEFAULT,
+                page: currentPage || PAGE_DEFAULT,
+                category: currentCategory || "",
+                isOnline: currentIsOnline || "",
+                isFeatured: currentIsFeatured || "",
+            },
+        });
+    };
 
     const handleChangePage = (page: number) => {
         push({
@@ -55,6 +51,34 @@ const useChangeURL = (isDisabled: boolean = false) => {
             query: {
                 ...query,
                 limit: selectedLimit,
+                page: PAGE_DEFAULT,
+            },
+        });
+    };
+
+    const handleChangeCategory = (category: string) => {
+        push({
+            query: {
+                ...query,
+                category,
+                page: PAGE_DEFAULT,
+            },
+        });
+    };
+    const handleChangeIsOnline = (isOnline: string) => {
+        push({
+            query: {
+                ...query,
+                isOnline,
+                page: PAGE_DEFAULT,
+            },
+        });
+    };
+    const handleChangeIsFeatured = (isFeatured: string) => {
+        push({
+            query: {
+                ...query,
+                isFeatured,
                 page: PAGE_DEFAULT,
             },
         });
@@ -84,13 +108,21 @@ const useChangeURL = (isDisabled: boolean = false) => {
     };
 
     return {
+        currentCategory,
+        currentIsFeatured,
+        currentIsOnline,
         currentLimit,
         currentPage,
         currentSearch,
+        handleChangeCategory,
+        handleChangeIsFeatured,
+        handleChangeIsOnline,
         handleChangeLimit,
         handleChangePage,
         handleSearch,
         handleClearSearch,
+        setUrl,
+        setUrlExplore,
     };
 };
 
