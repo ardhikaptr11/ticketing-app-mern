@@ -2,9 +2,7 @@ import { DateValue } from "@heroui/react";
 import {
     getLocalTimeZone,
     now,
-    parseAbsoluteToLocal,
     parseZonedDateTime,
-    ZonedDateTime,
 } from "@internationalized/date";
 
 const currentDate = now(getLocalTimeZone());
@@ -33,17 +31,84 @@ const formatDate = (date: string) => {
     return formattedDate;
 };
 
-const displayDate = (dateString: string) => {
-    const date = formatDate(dateString).toDate();
+const displaySingleDateTime = (dateString: string) => {
+    const dateObject = new Date(dateString);
 
-    const formatter = new Intl.DateTimeFormat("id-ID", {
-        dateStyle: "long",
-        timeStyle: "short",
+    const date = dateObject.toLocaleString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
         timeZone: "Asia/Jakarta",
     });
 
-    const displayedDate = formatter.format(date);
-    return `${displayedDate.replace(" pukul", ",")} WIB`;
+    return `${date.replace(" pukul", ",")} WIB`;
 };
 
-export { currentDate, displayDate, formatDate, standardizeDate };
+const displayEventDateTime = (
+    startDateString: string,
+    endDateString: string,
+) => {
+    const monthMap: Record<string, string> = {
+        "1": "Januari",
+        "2": "Februari",
+        "3": "Maret",
+        "4": "April",
+        "5": "Mei",
+        "6": "Juni",
+        "7": "Juli",
+        "8": "Agustus",
+        "9": "September",
+        "10": "Oktober",
+        "11": "November",
+        "12": "Desember",
+    };
+
+    const startDateObject = new Date(startDateString);
+    const endDateObject = new Date(endDateString);
+
+    const isSameDatetime =
+        startDateObject.getDate() === endDateObject.getDate() &&
+        startDateObject.getMonth() === endDateObject.getMonth() &&
+        startDateObject.getFullYear() === endDateObject.getFullYear();
+
+    const isEndAtMidnight =
+        endDateObject.getHours() === 23 && endDateObject.getMinutes() === 59;
+
+    const startHours =
+        startDateObject.getHours() < 10
+            ? `0${startDateObject.getHours()}`
+            : startDateObject.getHours();
+
+    const endHours =
+        endDateObject.getHours() < 10
+            ? `0${endDateObject.getHours()}`
+            : endDateObject.getHours();
+
+    const startMinutes =
+        startDateObject.getMinutes() < 10
+            ? `0${startDateObject.getMinutes()}`
+            : startDateObject.getMinutes();
+
+    const endMinutes =
+        endDateObject.getMinutes() < 10
+            ? `0${endDateObject.getMinutes()}`
+            : endDateObject.getMinutes();
+
+    return isEndAtMidnight
+        ? isSameDatetime
+            ? `${startDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} WIB - selesai`
+            : `${startDateObject.getDate()} - ${endDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} WIB - selesai`
+        : isSameDatetime
+            ? `${startDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${endHours}.${endMinutes} WIB`
+            : `${startDateObject.getDate()} - ${endDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${startHours}.${startMinutes} WIB`;
+};
+
+export {
+    currentDate,
+    displaySingleDateTime,
+    displayEventDateTime,
+    formatDate,
+    standardizeDate,
+};
