@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(loginUrl);
         }
 
-        if (token?.user?.role !== "member") {
+        if (token?.user?.role !== "user") {
             return NextResponse.redirect(new URL("/admin", request.url));
         }
 
