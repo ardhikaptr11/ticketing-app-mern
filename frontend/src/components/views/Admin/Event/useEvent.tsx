@@ -30,7 +30,7 @@ export const useEvent = () => {
         refetch: refetchEvents,
     } = useQuery({
         queryKey: ["Events", currentPage, currentLimit, currentSearch],
-        queryFn: () => getEvents(),
+        queryFn: getEvents,
         enabled: isReady && !!currentPage && !!currentLimit,
     });
 
