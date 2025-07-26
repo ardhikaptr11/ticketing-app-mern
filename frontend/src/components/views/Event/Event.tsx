@@ -23,7 +23,6 @@ const Event = () => {
         currentIsOnline,
         currentLimit,
         setUrlExplore,
-        currentSearch,
     } = useChangeURL();
 
     useEffect(() => {
