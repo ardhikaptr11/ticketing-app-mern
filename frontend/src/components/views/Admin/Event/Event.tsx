@@ -2,16 +2,24 @@ import DataTable from "@/components/ui/DataTable";
 import { Chip, useDisclosure } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Key, ReactNode, useCallback } from "react";
+import { Key, ReactNode, useCallback, useEffect } from "react";
 import { COLUMN_LIST_EVENT } from "./Event.constants";
 import { useEvent } from "./useEvent";
 import DropdownAction from "@/components/commons/DropdownAction";
 import AddEventModal from "./AddEventModal";
 import DeleteEventModal from "./DeleteEventModal";
 import { displayDate } from "@/utils/date";
+import {
+    ALLOWED_LIMITS,
+    LIMIT_DEFAULT,
+    PAGE_DEFAULT,
+} from "@/constants/list.constants";
+import useChangeURL from "@/hooks/useChangeURL";
 
 const Event = () => {
-    const { push, query } = useRouter();
+    const { isReady, push, query, replace } = useRouter();
+    const { setUrl, currentLimit, currentSearch } = useChangeURL();
+
     const {
         dataEvents,
         isLoadingEvents,
@@ -22,6 +30,23 @@ const Event = () => {
         selectedId,
         setSelectedId,
     } = useEvent();
+
+    useEffect(() => {
+        if (isReady) {
+            if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
+                replace({
+                    query: {
+                        limit: LIMIT_DEFAULT,
+                        page: PAGE_DEFAULT,
+                        search: currentSearch || "",
+                    },
+                });
+                return;
+            }
+
+            setUrl();
+        }
+    }, [isReady]);
 
     const addEventModal = useDisclosure();
     const deleteEventModal = useDisclosure();
