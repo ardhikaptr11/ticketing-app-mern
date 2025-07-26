@@ -80,7 +80,6 @@ const TicketTab = () => {
                     showLimit={false}
                     showSearch={false}
                     totalPages={1}
-                    disableChangeURL
                 />
                 <AddTicketModal
                     refetchTicket={refetchTicket}
