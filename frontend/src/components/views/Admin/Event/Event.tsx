@@ -8,7 +8,7 @@ import { useEvent } from "./useEvent";
 import DropdownAction from "@/components/commons/DropdownAction";
 import AddEventModal from "./AddEventModal";
 import DeleteEventModal from "./DeleteEventModal";
-import { displayDate } from "@/utils/date";
+import { displaySingleDateTime } from "@/utils/date";
 import {
     ALLOWED_LIMITS,
     LIMIT_DEFAULT,
@@ -56,7 +56,7 @@ const Event = () => {
             const cellValue = event[columnKey as keyof typeof event];
 
             if (columnKey === "startDate" || columnKey === "endDate")
-                return displayDate(cellValue as string);
+                return displaySingleDateTime(cellValue as string);
 
             switch (columnKey) {
                 case "banner":
