@@ -78,14 +78,8 @@ const useDetailEvent = () => {
 
         const payload = {
             ...data,
-            isFeatured: data.isFeatured === "true" ? true : false,
-            isPublished: data.isPublished === "true" ? true : false,
-            startDate: data.startDate
-                ? standardizeDate(data.startDate as DateValue)
-                : "",
-            endDate: data.endDate
-                ? standardizeDate(data.endDate as DateValue)
-                : "",
+            startDate: standardizeDate(data.startDate as DateValue),
+            endDate: standardizeDate(data.endDate as DateValue),
         };
 
         const event = await getEventById();
@@ -119,7 +113,8 @@ const useDetailEvent = () => {
         const inputToCompare = ["isOnline", "location"] as const;
 
         const payload = {
-            isOnline: data.isOnline === "true" ? true : false,
+            ...data,
+            // isOnline: data.isOnline === "true" ? true : false,
             location: {
                 address: data.isOnline === "true" ? "" : `${data.address}`,
                 region: data.isOnline === "true" ? "0" : `${data.region}`,
