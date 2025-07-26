@@ -8,8 +8,9 @@ import {
     ModalHeader,
     Spinner,
     Textarea,
+    useDraggable,
 } from "@heroui/react";
-import React, { useEffect } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import useAddCategoryModal from "./useAddCategoryModal";
 import { Controller } from "react-hook-form";
 import InputFile from "@/components/ui/InputFile";
@@ -23,6 +24,8 @@ interface PropTypes {
 
 const AddCategoryModal = (props: PropTypes) => {
     const { isOpen, onClose, onOpenChange, refetchCategories } = props;
+    const targetRef = useRef<HTMLElement>(null) as RefObject<HTMLElement>;
+    const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
 
     const {
         control,
@@ -58,10 +61,11 @@ const AddCategoryModal = (props: PropTypes) => {
             placement="center"
             scrollBehavior="inside"
             onClose={() => handleOnClose(onClose)}
+            ref={targetRef}
         >
             <form onSubmit={handleSubmitForm(handleAddCategory)}>
                 <ModalContent className="m-4">
-                    <ModalHeader>Add New Category</ModalHeader>
+                    <ModalHeader {...moveProps}>Add New Category</ModalHeader>
                     <ModalBody>
                         <div className="flex flex-col gap-2">
                             <p className="text-sm font-bold">Information</p>
