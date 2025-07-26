@@ -1,18 +1,24 @@
 import DataTable from "@/components/ui/DataTable";
-import {
-    useDisclosure,
-} from "@heroui/react";
+import { useDisclosure } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Key, ReactNode, useCallback } from "react";
+import { Key, ReactNode, useCallback, useEffect } from "react";
 import { COLUMN_LIST_CATEGORY } from "./Category.constants";
 import { useCategory } from "./useCategory";
 import AddCategoryModal from "./AddCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import DropdownAction from "@/components/commons/DropdownAction";
+import {
+    ALLOWED_LIMITS,
+    LIMIT_DEFAULT,
+    PAGE_DEFAULT,
+} from "@/constants/list.constants";
+import useChangeURL from "@/hooks/useChangeURL";
 
 const Category = () => {
-    const { push, query } = useRouter();
+    const { isReady, push, query, replace } = useRouter();
+    const { currentLimit, currentSearch, setUrl } = useChangeURL();
+
     const {
         dataCategory,
         isLoadingCategory,
@@ -23,6 +29,23 @@ const Category = () => {
         selectedIcon,
         setSelectedIcon,
     } = useCategory();
+
+    useEffect(() => {
+        if (isReady) {
+            if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
+                replace({
+                    query: {
+                        limit: LIMIT_DEFAULT,
+                        page: PAGE_DEFAULT,
+                        search: currentSearch || "",
+                    },
+                });
+                return;
+            }
+
+            setUrl();
+        }
+    }, [isReady]);
 
     const addCategoryModal = useDisclosure();
     const deleteCategoryModal = useDisclosure();
