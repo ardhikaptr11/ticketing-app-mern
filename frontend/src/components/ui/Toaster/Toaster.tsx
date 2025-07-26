@@ -22,8 +22,8 @@ const Toaster = (props: PropTypes) => {
             role="alert"
             aria-labelledby="toaster-label"
             className={cn(
-                "fixed top-8 z-50 max-w-xs rounded-xl border-gray-400 bg-white shadow-md",
-                afterLoginSuccess ? "right-1/2" : "right-8",
+                "fixed right-8 z-50 max-w-xs rounded-xl border-gray-400 bg-white shadow-md",
+                afterLoginSuccess ? "top-[4.5rem]" : "top-8",
                 isShowing ? "animate-toasterIn" : "animate-toasterOut",
             )}
         >
