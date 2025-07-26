@@ -13,8 +13,10 @@ import {
     SelectItem,
     Spinner,
     Textarea,
+    Tooltip,
+    useDraggable,
 } from "@heroui/react";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, RefObject, useEffect, useRef, useState } from "react";
 import useAddEventModal from "./useAddEventModal";
 import { Controller } from "react-hook-form";
 import InputFile from "@/components/ui/InputFile";
@@ -22,6 +24,7 @@ import { ICategory } from "@/types/Category";
 import { I18nProvider } from "@react-aria/i18n";
 import { IRegency } from "@/types/Event";
 import { currentDate } from "@/utils/date";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface PropTypes {
     isOpen: boolean;
@@ -32,6 +35,12 @@ interface PropTypes {
 
 const AddEventModal = (props: PropTypes) => {
     const { isOpen, onClose, onOpenChange, refetchEvents } = props;
+    const [isFocused, setIsFocused] = useState(false);
+
+    const targetRef = useRef<HTMLElement>(null) as RefObject<HTMLElement>;
+    const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
+
+    const isMobile = useMediaQuery("(max-width: 768px)");
 
     const {
         control,
@@ -76,10 +85,11 @@ const AddEventModal = (props: PropTypes) => {
             placement="center"
             scrollBehavior="inside"
             onClose={() => handleOnClose(onClose)}
+            ref={targetRef}
         >
             <form onSubmit={handleSubmitForm(handleAddEvent)}>
                 <ModalContent className="m-4">
-                    <ModalHeader>Add New Event</ModalHeader>
+                    <ModalHeader {...moveProps}>Add New Event</ModalHeader>
                     <ModalBody>
                         <div className="flex flex-col gap-2">
                             <p className="text-sm font-bold">Information</p>
@@ -189,28 +199,53 @@ const AddEventModal = (props: PropTypes) => {
                                     name="endDate"
                                     control={control}
                                     render={({ field }) => (
-                                        <I18nProvider locale="en-GB">
-                                            <DatePicker
-                                                {...field}
-                                                showMonthAndYearPickers
-                                                hideTimeZone
-                                                label="End Date"
-                                                variant="bordered"
-                                                hourCycle={24}
-                                                granularity="minute"
-                                                placeholderValue={
-                                                    startDateValue
-                                                }
-                                                minValue={startDateValue}
-                                                isInvalid={
-                                                    errors.endDate !== undefined
-                                                }
-                                                errorMessage={
-                                                    errors.endDate?.message
-                                                }
-                                                disableAnimation={true}
-                                            />
-                                        </I18nProvider>
+                                        <Tooltip
+                                            placement="bottom"
+                                            isOpen={
+                                                isMobile ? isFocused : undefined
+                                            }
+                                            offset={10}
+                                            content={
+                                                <div className="max-w-[250px] p-2">
+                                                    <p className="text-tiny">
+                                                        If you don't know when
+                                                        to end the event, just
+                                                        set it as 23.59 and we will
+                                                        show it as "until end"
+                                                    </p>
+                                                </div>
+                                            }
+                                            showArrow
+                                        >
+                                            <div className="w-full">
+                                                <I18nProvider locale="en-GB">
+                                                    <DatePicker
+                                                        {...field}
+                                                        showMonthAndYearPickers
+                                                        hideTimeZone
+                                                        label="End Date"
+                                                        variant="bordered"
+                                                        hourCycle={24}
+                                                        granularity="minute"
+                                                        placeholderValue={
+                                                            startDateValue
+                                                        }
+                                                        minValue={
+                                                            startDateValue
+                                                        }
+                                                        isInvalid={
+                                                            errors.endDate !==
+                                                            undefined
+                                                        }
+                                                        errorMessage={
+                                                            errors.endDate
+                                                                ?.message
+                                                        }
+                                                        disableAnimation={true}
+                                                    />
+                                                </I18nProvider>
+                                            </div>
+                                        </Tooltip>
                                     )}
                                 />
 
@@ -281,39 +316,6 @@ const AddEventModal = (props: PropTypes) => {
                                 />
 
                                 <Controller
-                                    name="isOnline"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            label="Online / Offline"
-                                            variant="bordered"
-                                            selectionMode="single"
-                                            isInvalid={
-                                                errors.isOnline !== undefined
-                                            }
-                                            errorMessage={
-                                                errors.isOnline?.message
-                                            }
-                                            disallowEmptySelection
-                                        >
-                                            <SelectItem
-                                                key="true"
-                                                textValue="Online"
-                                            >
-                                                Online
-                                            </SelectItem>
-                                            <SelectItem
-                                                key="false"
-                                                textValue="Offline"
-                                            >
-                                                Offline
-                                            </SelectItem>
-                                        </Select>
-                                    )}
-                                />
-
-                                <Controller
                                     name="description"
                                     control={control}
                                     render={({ field }) => (
@@ -331,32 +333,86 @@ const AddEventModal = (props: PropTypes) => {
                                     )}
                                 />
                             </div>
+                            <p className="text-sm font-bold">Location</p>
+                            <Controller
+                                name="isOnline"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        label="Online / Offline"
+                                        variant="bordered"
+                                        selectionMode="single"
+                                        isInvalid={
+                                            errors.isOnline !== undefined
+                                        }
+                                        errorMessage={errors.isOnline?.message}
+                                        disallowEmptySelection
+                                    >
+                                        <SelectItem
+                                            key="true"
+                                            textValue="Online"
+                                        >
+                                            Online
+                                        </SelectItem>
+                                        <SelectItem
+                                            key="false"
+                                            textValue="Offline"
+                                        >
+                                            Offline
+                                        </SelectItem>
+                                    </Select>
+                                )}
+                            />
+                            <Controller
+                                name="address"
+                                control={control}
+                                render={({ field }) => (
+                                    <Tooltip
+                                        placement="bottom"
+                                        isOpen={
+                                            isMobile ? isFocused : undefined
+                                        }
+                                        offset={10}
+                                        content={
+                                            <div className="max-w-[250px] p-2">
+                                                <p className="text-tiny">
+                                                    If the event is held online,
+                                                    provide the URL of your
+                                                    preferred meeting app (e.g.
+                                                    Zoom, Google Meet) as the
+                                                    address.
+                                                </p>
+                                            </div>
+                                        }
+                                        showArrow
+                                    >
+                                        <div className="w-full">
+                                            <Input
+                                                {...field}
+                                                label="Address"
+                                                variant="bordered"
+                                                autoComplete="off"
+                                                isInvalid={
+                                                    errors.address !== undefined
+                                                }
+                                                errorMessage={
+                                                    errors.address?.message
+                                                }
+                                                onFocus={() =>
+                                                    setIsFocused(true)
+                                                }
+                                                onBlur={() =>
+                                                    setIsFocused(false)
+                                                }
+                                            />
+                                        </div>
+                                    </Tooltip>
+                                )}
+                            />
                             {isOnline === "false" && (
                                 <Fragment>
-                                    <p className="text-sm font-bold">
-                                        Location
-                                    </p>
                                     <div className="mb-4 flex flex-col gap-4">
-                                        <Controller
-                                            name="address"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Input
-                                                    {...field}
-                                                    label="Address"
-                                                    variant="bordered"
-                                                    autoComplete="off"
-                                                    isInvalid={
-                                                        errors.address !==
-                                                        undefined
-                                                    }
-                                                    errorMessage={
-                                                        errors.address?.message
-                                                    }
-                                                />
-                                            )}
-                                        />
-
                                         <Controller
                                             name="region"
                                             control={control}
