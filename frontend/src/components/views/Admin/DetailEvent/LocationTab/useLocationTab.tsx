@@ -37,7 +37,7 @@ const useLocationTab = () => {
 
     const getGeolocation = async (regency: string) => {
         const { data } = await eventServices.getGeolocationByRegency(regency);
-        const { latitude, longitude } = data.results[0].location;
+        const { latitude, longitude } = data.data.results[0].location;
 
         return { latitude, longitude };
     };
@@ -61,8 +61,8 @@ const useLocationTab = () => {
             });
         },
         onSuccess: (data) => {
-            setValueUpdateEventLocation("latitude", data.latitude);
-            setValueUpdateEventLocation("longitude", data.longitude);
+            setValueUpdateEventLocation("latitude", data?.latitude);
+            setValueUpdateEventLocation("longitude", data?.longitude);
             clearErrors(["latitude", "longitude"]);
         },
     });
