@@ -9,6 +9,7 @@ const DetailBanner = () => {
 
     const {
         dataBanner,
+        handleUpdateBanner,
         handleUpdateBannerInfo,
         isPendingMutateUpdateBannerInfo,
         isSuccessMutateUpdateBannerInfo,
@@ -21,7 +22,7 @@ const DetailBanner = () => {
             <Tab key="icon" title="Image">
                 <ImageTab
                     currentImage={dataBanner?.image}
-                    onUpdate={handleUpdateBannerInfo}
+                    onUpdate={handleUpdateBanner}
                     isPendingUpdate={isPendingMutateUpdateBannerInfo}
                     isSuccessUpdate={isSuccessMutateUpdateBannerInfo}
                     setHasUnsavedChanges={setHasUnsavedChanges}

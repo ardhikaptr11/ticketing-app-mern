@@ -52,6 +52,8 @@ const useDetailBanner = () => {
         },
     });
 
+    const handleUpdateBanner = (data: IBanner) => mutateUpdateBannerInfo(data);
+
     const handleUpdateBannerInfo = async (data: IBanner) => {
         const inputToCompare = ["title", "isShow"] as const;
 
@@ -77,6 +79,7 @@ const useDetailBanner = () => {
 
     return {
         dataBanner,
+        handleUpdateBanner,
         handleUpdateBannerInfo,
         isPendingMutateUpdateBannerInfo,
         isSuccessMutateUpdateBannerInfo,
