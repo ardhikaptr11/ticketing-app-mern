@@ -159,7 +159,6 @@ const LocationTab = (props: PropTypes) => {
                                         }) => (
                                             <Autocomplete
                                                 {...field}
-                                                // key={regionId}
                                                 aria-label="City selection"
                                                 size="md"
                                                 defaultItems={
