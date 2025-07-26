@@ -29,7 +29,6 @@ interface PropTypes {
     showSearch?: boolean;
     showLimit?: boolean;
     totalPages: number;
-    disableChangeURL?: boolean;
 }
 
 const DataTable = (props: PropTypes) => {
@@ -44,7 +43,6 @@ const DataTable = (props: PropTypes) => {
         totalPages,
         showSearch = true,
         showLimit = true,
-        disableChangeURL = false,
     } = props;
 
     const {
@@ -54,7 +52,7 @@ const DataTable = (props: PropTypes) => {
         handleChangePage,
         handleSearch,
         handleChangeLimit,
-    } = useChangeURL(disableChangeURL);
+    } = useChangeURL();
 
     const TopContent = useMemo(
         () => (
