@@ -45,6 +45,7 @@ export interface IPaginationQuery {
 	isFeatured?: string;
 	isPublished?: string;
 	isOnline?: string;
+	isShow?: string;
 }
 
 export interface ISendMail {
