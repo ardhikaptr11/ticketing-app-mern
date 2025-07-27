@@ -18,19 +18,26 @@ export const create = async (req: IReqUser, res: Response, next: NextFunction) =
 };
 export const findAll = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
-		const { page = 1, limit = 10, search } = req.query as unknown as IPaginationQuery;
+		const { page = 1, limit = 10, search, isShow } = req.query as unknown as IPaginationQuery;
 
-		const query: FilterQuery<Yup.InferType<typeof bannerDAO>> = {};
+		const buildQuery = (filter: any) => {
+			const query: FilterQuery<Yup.InferType<typeof bannerDAO>> = {};
 
-		if (search) {
-			Object.assign(query, {
-				...query,
-				$text: {
-					$search: search
-				}
-			});
+			if (filter.search) query.$text = { $search: filter.search };
+			if (filter.isShow) query.isShow = filter.isShow;
+
+			return query;
+		};
+
+		if ((typeof page === "string" && !parseInt(page)) || (typeof limit === "string" && !parseInt(limit))) {
+			return response.error(res, { message: "Invalid query parameters", status: 400 }, null);
 		}
 
+		const query = buildQuery({
+			search,
+			isShow
+		});
+		
 		const result = await BannerModel.find(query)
 			.limit(+limit)
 			.skip((+page - 1) * +limit)
