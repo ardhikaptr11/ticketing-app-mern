@@ -2,10 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { string, object, ref } from "yup";
 
 import { UserModel } from "../models/user.model";
-import { encrypt } from "../utils/encryption";
+import { compare, encrypt } from "../utils/encryption";
 import { generateToken } from "../utils/jwt";
 import { IReqUser } from "../utils/interface";
 import response from "../utils/response";
+import { isValidObjectId } from "mongoose";
 
 type TRegister = {
 	fullName: string;
@@ -56,7 +57,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 		return response.success(res, result, "Registration success");
 	} catch (error: any) {
 		error.message = "Registration failed";
-		next(error)
+		next(error);
 	}
 };
 
@@ -103,6 +104,52 @@ export const me = async (req: IReqUser, res: Response, next: NextFunction) => {
 		response.success(res, result, "Success get user profile");
 	} catch (error: any) {
 		error.message = "Failed to get user profile";
+		next(error);
+	}
+};
+
+export const updateUserInfo = async (req: IReqUser, res: Response, next: NextFunction) => {
+	try {
+		const userId = req.user?.id;
+
+		if (!isValidObjectId(userId))
+			return response.error(res, { message: "Failed to update profile. User not found", status: 404 }, null);
+
+		const user = await UserModel.findById(userId);
+
+		if (!user) return response.error(res, { message: "User not found", status: 404 }, null);
+
+		const result = await UserModel.findByIdAndUpdate(userId, req.body, { new: true });
+		response.success(res, result, "Profile successfully updated");
+	} catch (error: any) {
+		error.message = "Failed to update user profile";
+		next(error);
+	}
+};
+
+export const updateUserPassword = async (req: IReqUser, res: Response, next: NextFunction) => {
+	try {
+		const userId = req.user?.id;
+		const { currentPassword, newPassword } = req.body;
+
+		const user = await UserModel.findById(userId);
+		if (!user) return response.error(res, { message: "User not found", status: 404 }, null);
+
+		const currentHashedPassword = user.password;
+
+		const isPasswordMatch: boolean = compare(currentPassword, currentHashedPassword);
+		if (!isPasswordMatch) return response.authError(res, 401, "Invalid password");
+
+		const newEncryptedPassword = encrypt(newPassword);
+
+		const isUsingSamePassword: boolean = newEncryptedPassword === currentHashedPassword;
+		if (isUsingSamePassword)
+			return response.error(res, { message: "Cannot use the same password.", status: 409 }, null);
+
+		const result = await UserModel.findByIdAndUpdate(userId, { password: newEncryptedPassword }, { new: true });
+		response.success(res, result, "Password successfully updated");
+	} catch (error: any) {
+		error.message = "Failed to update password";
 		next(error);
 	}
 };
