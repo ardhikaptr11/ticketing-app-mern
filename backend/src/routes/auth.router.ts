@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { register, login, me, activation } from "../controllers/auth.controller";
+import { register, login, me, activation, updateUserInfo, updateUserPassword } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import aclMiddleware from "../middlewares/acl.middleware";
 import { ROLES } from "../utils/constant";
@@ -38,6 +38,40 @@ router.get(
 	me
 	/**
 	  #swagger.tags = ["Authentication"]
+	  #swagger.security = [{
+	    "bearerAuth": [] 
+	  }]
+	 */
+);
+router.put(
+	"/auth/update-profile",
+	[authenticate, aclMiddleware([ROLES.MEMBER])],
+	updateUserInfo
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+	    required: true,
+	    schema: {
+		  $ref: "#components/schemas/UpdateProfileRequest"
+	    }
+	  }
+	  #swagger.security = [{
+	    "bearerAuth": [] 
+	  }]
+	 */
+);
+router.put(
+	"/auth/update-password",
+	[authenticate, aclMiddleware([ROLES.MEMBER, ROLES.ADMIN])],
+	updateUserPassword
+	/**
+	  #swagger.tags = ["Authentication"]
+	  #swagger.requestBody = {
+	    required: true,
+	    schema: {
+		  $ref: "#components/schemas/UpdatePasswordRequest"
+	    }
+	  }
 	  #swagger.security = [{
 	    "bearerAuth": [] 
 	  }]
