@@ -28,6 +28,6 @@ const BannerSchema = new mongoose.Schema<Banner>(
 	{
 		timestamps: true
 	}
-).index({ title: "text" });
+).index({ title: "text", isShow: "text" });
 
 export const BannerModel = mongoose.model<Banner>(BANNER_MODEL_NAME, BannerSchema);
