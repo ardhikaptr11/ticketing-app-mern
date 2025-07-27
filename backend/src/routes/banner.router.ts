@@ -28,8 +28,14 @@ router.get(
 	"/banners",
 	findAll
 	/**
-      #swagger.tags = ['Banners']
-     */
+    #swagger.tags = ['Banners']
+    #swagger.parameters['isShow'] = {
+	    in: 'query',
+	    required: false,
+	    type: 'boolean',
+	    enum: ['true', 'false']
+	  }
+  */
 );
 router.get(
 	"/banners/:id",
