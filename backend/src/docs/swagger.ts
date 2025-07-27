@@ -80,6 +80,14 @@ const doc = {
 				identifier: "johndoe123",
 				password: "John123!"
 			},
+			UpdateProfileRequest: {
+				fullName: "John Peter Doe",
+				profilePicture: "https://example.com/path/to/profile-picture.jpg"
+			},
+			UpdatePasswordRequest: {
+				currentPassword: "John123!",
+				newPassword: "John1234!"
+			},
 			ActivationRequest: {
 				code: "code sent to email"
 			},
@@ -119,7 +127,7 @@ const doc = {
 			CreateOrderRequest: {
 				ticket: "A ticket the order is for (ObjectID)",
 				quantity: 2,
-				events: "An event the order is for (ObjectID)",
+				events: "An event the order is for (ObjectID)"
 			},
 			DeleteMediaRequest: {
 				fileURL: "https://example.com/path/to/cloudinary/file.jpg"
