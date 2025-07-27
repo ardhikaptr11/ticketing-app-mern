@@ -25,7 +25,9 @@ export const findAll = async (req: IReqUser, res: Response, next: NextFunction) 
 		const buildQuery = (filter: any) => {
 			const query: FilterQuery<Yup.InferType<typeof eventDAO>> = {};
 
-			if (filter.search) query.$text = { $search: filter.search };
+			if (filter.search) {
+				query.$or = [{ name: { $regex: search, $options: "i" } }];
+			}
 			if (filter.category) query.category = filter.category;
 			if (filter.isFeatured) query.isFeatured = filter.isFeatured;
 			if (filter.isPublished) query.isPublished = filter.isPublished;
