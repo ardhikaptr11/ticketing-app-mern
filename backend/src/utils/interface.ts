@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { eventDAO } from "../models/event.model";
 import { ticketDAO } from "../models/ticket.model";
 import { bannerDAO } from "../models/banner.model";
-import { orderDAO, TVoucher } from "../models/order.model";
+import { orderDAO,TVoucher } from "../models/order.model";
 import { TResponseMidtrans } from "./payment";
 
 export interface CustomMulterError extends Omit<MulterError, "code"> {
@@ -82,13 +82,12 @@ export interface Ticket extends Omit<Yup.InferType<typeof ticketDAO>, "events"> 
 
 export interface Banner extends Yup.InferType<typeof bannerDAO> {}
 
-export interface Order extends Omit<Yup.InferType<typeof orderDAO>, "createdBy" | "events" | "ticket"> {
+export interface Order extends Omit<Yup.InferType<typeof orderDAO>, "createdBy" | "event"> {
 	total: number;
 	status: string;
 	payment: TResponseMidtrans;
 	createdBy: ObjectId;
-	events: ObjectId;
+	event: ObjectId;
 	orderId: string;
-	ticket: ObjectId;
 	vouchers: TVoucher[];
 }
