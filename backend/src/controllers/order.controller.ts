@@ -3,7 +3,7 @@ import { FilterQuery } from "mongoose";
 import * as Yup from "yup";
 
 import { IReqUser } from "../utils/interface";
-import { orderDAO, OrderModel, OrderStatus, TOrder, TVoucher } from "../models/order.model";
+import { orderDAO, OrderModel, OrderStatus, TOrder, TCartItem, TVoucher } from "../models/order.model";
 import { TicketModel } from "../models/ticket.model";
 import response from "../utils/response";
 import { getId } from "../utils/identifier";
@@ -11,40 +11,56 @@ import { getId } from "../utils/identifier";
 export const create = async (req: IReqUser, res: Response, next: NextFunction) => {
 	try {
 		const userId = req.user?.id;
+		const cartItems = req.body as TCartItem[];
+
+		if (!Array.isArray(cartItems) || cartItems.length === 0)
+			return response.error(res, { message: "Please provide at least one item", status: 400 }, null);
+
+		let totalPrice = 0;
+		const orderedTickets = [];
+
+		for (const item of cartItems) {
+			const ticket = await TicketModel.findById(item.ticket);
+			if (!ticket) {
+				return response.error(
+					res,
+					{
+						message: `Ticket not found`,
+						status: 404
+					},
+					null
+				);
+			}
+
+			if (ticket.quantity < item.quantity) {
+				return response.error(
+					res,
+					{
+						message: `Insufficient quantity for requested ticket`,
+						status: 400
+					},
+					null
+				);
+			}
+
+			const subtotal = +ticket.price * +item.quantity;
+			totalPrice += subtotal;
+
+			orderedTickets.push({
+				ticket: ticket._id,
+				quantity: item.quantity,
+				price: ticket.price
+			});
+		}
+
 		const payload = {
-			...req.body,
+			event: cartItems[0].event,
+			tickets: orderedTickets,
+			total: totalPrice,
 			createdBy: userId
-		} as TOrder;
+		};
 
 		await orderDAO.validate(payload);
-
-		const ticket = await TicketModel.findById(payload.ticket);
-
-		if (!ticket)
-			return response.error(
-				res,
-				{
-					message: "Ticket not found",
-					status: 404
-				},
-				null
-			);
-		if (ticket.quantity < payload.quantity)
-			return response.error(
-				res,
-				{
-					message: "Ticket quantity is not enough",
-					status: 400
-				},
-				null
-			);
-
-		const total: number = +ticket?.price * +payload.quantity;
-
-		Object.assign(payload, {
-			...payload,
-			total
-		});
 
 		const result = await OrderModel.create(payload);
 		response.success(res, result, "Order successfully created");
@@ -207,7 +223,7 @@ export const complete = async (req: IReqUser, res: Response, next: NextFunction)
 			return response.error(res, { message: "Order has been completed", status: 409 }, null);
 
 		const vouchers: TVoucher[] = Array.from(
-			{ length: order.quantity },
+			{ length: order.tickets.length },
 			() =>
 				({
 					voucherId: getId("voucher"),
@@ -221,19 +237,19 @@ export const complete = async (req: IReqUser, res: Response, next: NextFunction)
 			{ new: true }
 		);
 
-		const ticket = await TicketModel.findById(order.ticket);
+		order.tickets.forEach(async (t) => {
+			const ticket = await TicketModel.findById(t.ticket);
+			if (!ticket) return response.error(res, { message: "Ticket not found", status: 404 }, null);
 
-		if (!ticket) return response.error(res, { message: "Ticket not found", status: 404 }, null);
-
-		await TicketModel.updateOne(
-			{
-				_id: ticket._id
-			},
-			{
-				// quantity: ticket.quantity - order.quantity
-				$inc: { quantity: -order.quantity } // Uncomment the above line if this line occurs an error
-			}
-		);
+			await TicketModel.updateOne(
+				{
+					_id: t.ticket
+				},
+				{
+					$inc: { quantity: -t.quantity }
+				}
+			);
+		});
 
 		response.success(res, result, "Success completing an order");
 	} catch (error: any) {
