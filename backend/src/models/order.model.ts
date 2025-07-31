@@ -12,9 +12,17 @@ export const ORDER_MODEL_NAME = "Order";
 
 export const orderDAO = Yup.object({
 	createdBy: Yup.string().required(),
-	events: Yup.string().required(),
-	ticket: Yup.string().required(),
-	quantity: Yup.number().required()
+	event: Yup.string().required(),
+	tickets: Yup.array()
+		.of(
+			Yup.object({
+				ticket: Yup.string().required(),
+				quantity: Yup.number().required(),
+				price: Yup.number().required()
+			})
+		)
+		.required(),
+	total: Yup.number().required()
 });
 
 export type TOrder = Yup.InferType<typeof orderDAO>;
@@ -24,6 +32,12 @@ export enum OrderStatus {
 	COMPLETED = "completed",
 	CANCELLED = "cancelled"
 }
+
+export type TCartItem = {
+	event: string;
+	ticket: string;
+	quantity: number;
+};
 
 export type TVoucher = {
 	voucherId: string;
@@ -40,7 +54,7 @@ const OrderSchema = new Schema<Order>(
 			ref: USER_MODEL_NAME,
 			required: true
 		},
-		events: {
+		event: {
 			type: Schema.Types.ObjectId,
 			ref: EVENT_MODEL_NAME,
 			required: true
@@ -65,15 +79,14 @@ const OrderSchema = new Schema<Order>(
 			type: Schema.Types.String,
 			enum: [OrderStatus.PENDING, OrderStatus.COMPLETED, OrderStatus.CANCELLED]
 		},
-		ticket: {
-			type: Schema.Types.ObjectId,
-			ref: TICKET_MODEL_NAME,
-			required: true
-		},
-		quantity: {
-			type: Schema.Types.Number,
-			required: true
-		},
+		tickets: [
+			{
+				_id: false,
+				ticket: { type: Schema.Types.ObjectId, ref: TICKET_MODEL_NAME, required: true },
+				quantity: { type: Schema.Types.Number, required: true },
+				price: { type: Schema.Types.Number, required: true }
+			}
+		],
 		vouchers: {
 			type: [
 				{
