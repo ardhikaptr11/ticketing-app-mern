@@ -1703,19 +1703,22 @@
         }
       },
       "CreateOrderRequest": {
-        "type": "object",
-        "properties": {
-          "ticket": {
-            "type": "string",
-            "example": "A ticket the order is for (ObjectID)"
-          },
-          "quantity": {
-            "type": "number",
-            "example": 2
-          },
-          "events": {
-            "type": "string",
-            "example": "An event the order is for (ObjectID)"
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ticket": {
+              "type": "string",
+              "example": "A ticket the order is for (ObjectID)"
+            },
+            "quantity": {
+              "type": "number",
+              "example": 1
+            },
+            "event": {
+              "type": "string",
+              "example": "An event the order is for (ObjectID)"
+            }
           }
         },
         "xml": {
