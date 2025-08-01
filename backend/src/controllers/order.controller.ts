@@ -222,8 +222,10 @@ export const complete = async (req: IReqUser, res: Response, next: NextFunction)
 		if (order.status === OrderStatus.COMPLETED)
 			return response.error(res, { message: "Order has been completed", status: 409 }, null);
 
+		const totalTickets = order.tickets.reduce((acc, ticket) => acc + ticket.quantity, 0)
+
 		const vouchers: TVoucher[] = Array.from(
-			{ length: order.tickets.length },
+			{ length: totalTickets },
 			() =>
 				({
 					voucherId: getId("voucher"),
