@@ -67,7 +67,7 @@ router.get(
 );
 router.delete(
 	"/orders/:orderId",
-	[authenticate, aclMiddleware([ROLES.ADMIN])],
+	[authenticate, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER])],
 	remove
 	/**
       #swagger.tags = ["Orders"]
@@ -79,7 +79,7 @@ router.delete(
 
 router.put(
 	"/orders/:orderId/pending",
-	[authenticate, aclMiddleware([ROLES.ADMIN])],
+	[authenticate, aclMiddleware([ROLES.MEMBER])],
 	pending
 	/**
       #swagger.tags = ["Orders"]
@@ -101,7 +101,7 @@ router.put(
 );
 router.put(
 	"/orders/:orderId/cancelled",
-	[authenticate, aclMiddleware([ROLES.ADMIN])],
+	[authenticate, aclMiddleware([ROLES.MEMBER])],
 	cancelled
 	/**
       #swagger.tags = ["Orders"]
