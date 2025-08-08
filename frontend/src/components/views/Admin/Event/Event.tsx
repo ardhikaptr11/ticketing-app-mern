@@ -15,6 +15,8 @@ import {
     PAGE_DEFAULT,
 } from "@/constants/list.constants";
 import useChangeURL from "@/hooks/useChangeURL";
+import { IoTrashOutline } from "react-icons/io5";
+import { RiInformationLine } from "react-icons/ri";
 
 const Event = () => {
     const { isReady, push, query, replace } = useRouter();
@@ -55,6 +57,23 @@ const Event = () => {
         (event: Record<string, unknown>, columnKey: Key) => {
             const cellValue = event[columnKey as keyof typeof event];
 
+            const listOfActions = [
+                {
+                    name: "detail",
+                    startContent: <RiInformationLine className="text-medium" />,
+                    action: () => push(`/admin/event/${event._id}`),
+                },
+                {
+                    name: "delete",
+                    startContent: <IoTrashOutline className="text-medium" />,
+                    action: () => {
+                        setSelectedId(`${event._id}`);
+                        setSelectedBanner(`${event.banner}`);
+                        deleteEventModal.onOpen();
+                    },
+                },
+            ];
+
             if (columnKey === "startDate" || columnKey === "endDate")
                 return displaySingleDateTime(cellValue as string);
 
@@ -81,16 +100,7 @@ const Event = () => {
                     );
                 case "actions":
                     return (
-                        <DropdownAction
-                            onPressButtonDetail={() =>
-                                push(`/admin/event/${event._id}`)
-                            }
-                            onPressButtonDelete={() => {
-                                setSelectedId(`${event._id}`);
-                                setSelectedBanner(`${event.banner}`);
-                                deleteEventModal.onOpen();
-                            }}
-                        />
+                        <DropdownAction listOfActions={listOfActions ?? []} />
                     );
                 default:
                     return cellValue as ReactNode;
