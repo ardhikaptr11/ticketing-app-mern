@@ -18,19 +18,19 @@ export const SIDEBAR_ADMIN = [
     {
         key: "event",
         label: "Event",
-        href: "/admin/event",
+        href: "/admin/event?limit=5&page=1&search=",
         icon: <CiViewList />,
     },
     {
         key: "category",
         label: "Category",
-        href: "/admin/category",
+        href: "/admin/category?limit=5&page=1&search=",
         icon: <CiShoppingTag />,
     },
     {
         key: "banner",
         label: "Banner",
-        href: "/admin/banner",
+        href: "/admin/banner?limit=5&page=1&search=",
         icon: <CiBookmark />,
     },
     {
@@ -44,8 +44,8 @@ export const SIDEBAR_ADMIN = [
 export const SIDEBAR_MEMBER = [
     {
         key: "transaction",
-        label: "Transaction",
-        href: "/member/transaction",
+        label: "Transactions",
+        href: "/member/transactions",
         icon: <CiWallet />,
     },
     {
