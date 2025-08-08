@@ -1,6 +1,4 @@
-import SessionExpiredModal from "@/components/ui/SessionExpiredModal";
 import Toaster from "@/components/ui/Toaster";
-import { ModalContext } from "@/contexts/ModalContext";
 import { defaultToaster, ToasterContext } from "@/contexts/ToasterContext";
 import cn from "@/utils/cn";
 import { Inter } from "next/font/google";
@@ -19,7 +17,6 @@ const AppShell = (props: PropTypes) => {
     const { children } = props;
 
     const { toaster, setToaster } = useContext(ToasterContext);
-    const { modal, setModal } = useContext(ModalContext);
 
     const [isShowing, setIsShowing] = useState(false);
 
@@ -42,21 +39,12 @@ const AppShell = (props: PropTypes) => {
     return (
         <main className={cn(inter.className)}>
             {children}
-            {!!toaster.type && (
-                <Toaster
-                    type={toaster.type}
-                    message={toaster.message}
-                    isShowing={isShowing}
-                    afterLoginSuccess={!!toaster.afterLoginSuccess}
-                />
-            )}
-            {!!modal.message && (
-                <SessionExpiredModal
-                    isOpen={!!modal.message}
-                    title={modal.title}
-                    message={modal.message}
-                />
-            )}
+            <Toaster
+                type={toaster.type}
+                message={toaster.message}
+                isShowing={isShowing}
+                afterLoginSuccess={!!toaster.afterLoginSuccess}
+            />
         </main>
     );
 };
