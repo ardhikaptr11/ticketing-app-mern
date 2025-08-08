@@ -8,7 +8,9 @@ interface PropTypes {
 
 const ActivationPage = (props: PropTypes) => {
     return (
-        <AuthLayout title="Zentix | Activation Success">
+        <AuthLayout
+            title={`Zentix | Activation ${props.status.charAt(0).toUpperCase() + props.status.slice(1)}`}
+        >
             <Activation {...props} />
         </AuthLayout>
     );
@@ -19,7 +21,6 @@ export async function getServerSideProps(context: { query: { code: string } }) {
         const result = await authServices.activation({
             code: context.query.code,
         });
-
 
         if (result.data.data) {
             return {
