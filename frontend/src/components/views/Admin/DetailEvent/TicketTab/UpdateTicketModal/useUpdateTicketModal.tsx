@@ -21,9 +21,9 @@ const updateTicketSchema = yup.object().shape({
         .required("Ticket price is required"),
     quantity: yup
         .number()
-        .typeError("Quantity cannot be empty (min: 1)")
+        .typeError("Quantity cannot be empty (min: 0)")
         .integer("Quantity must be a valid integer number")
-        .moreThan(0, "Quantity must be bigger than 0")
+        .min(0, "Quantity must be a positive integer number")
         .required("Ticket quantity is required"),
 });
 
