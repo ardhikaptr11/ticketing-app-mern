@@ -101,8 +101,26 @@ const displayEventDateTime = (
             ? `${startDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} WIB - selesai`
             : `${startDateObject.getDate()} - ${endDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} WIB - selesai`
         : isSameDatetime
-            ? `${startDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${endHours}.${endMinutes} WIB`
-            : `${startDateObject.getDate()} - ${endDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${startHours}.${startMinutes} WIB`;
+          ? `${startDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${endHours}.${endMinutes} WIB`
+          : `${startDateObject.getDate()} - ${endDateObject.getDate()} ${monthMap[String(endDateObject.getMonth() + 1)]} ${startDateObject.getFullYear()}, ${startHours}.${startMinutes} - ${startHours}.${startMinutes} WIB`;
+};
+
+const getEventDuration = (startDate: string, endDate: string) => {
+    const startDateObject = new Date(startDate);
+    const endDateObject = new Date(endDate);
+    const diffMs = Math.abs(
+        endDateObject.getTime() - startDateObject.getTime(),
+    );
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+    return days === 0
+        ? minutes === 0
+            ? `${hours} jam`
+            : `${hours} jam ${minutes} menit`
+        : `${days} hari`;
 };
 
 export {
@@ -110,5 +128,6 @@ export {
     displaySingleDateTime,
     displayEventDateTime,
     formatDate,
+    getEventDuration,
     standardizeDate,
 };
