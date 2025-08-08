@@ -8,8 +8,10 @@ export const useTicketTab = () => {
     const [selectedId, setSelectedId] = useState("");
     const { query, isReady } = useRouter();
 
-    const getTicketByEvent = async () => {
-        const { data } = await ticketServices.getTicketByEvent(`${query.id}`);
+    const getTicketsByEventId = async () => {
+        const { data } = await ticketServices.getTicketsByEventId(
+            `${query.id}`,
+        );
         return data.data;
     };
 
@@ -20,7 +22,7 @@ export const useTicketTab = () => {
         isRefetching: isRefetchingTicket,
     } = useQuery({
         queryKey: ["Tickets"],
-        queryFn: getTicketByEvent,
+        queryFn: getTicketsByEventId,
         enabled: isReady,
     });
 
