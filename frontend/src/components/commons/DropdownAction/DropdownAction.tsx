@@ -1,28 +1,28 @@
 import {
     Button,
+    cn,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
 } from "@heroui/react";
+import { ReactNode } from "react";
 import { IoInformationCircleOutline, IoTrashOutline } from "react-icons/io5";
 import { LuPencilLine } from "react-icons/lu";
 import { SlOptionsVertical } from "react-icons/sl";
 
+export type TActionList = {
+    name: string;
+    startContent: ReactNode;
+    action: () => void;
+};
+
 interface PropTypes {
-    actionType?: string;
-    onPressButtonDetail?: () => void;
-    onPressButtonDelete: () => void;
-    onPressButtonUpdate?: () => void;
+    listOfActions: TActionList[];
 }
 
 const DropdownAction = (props: PropTypes) => {
-    const {
-        onPressButtonDetail,
-        onPressButtonDelete,
-        onPressButtonUpdate,
-        actionType = "detail",
-    } = props;
+    const { listOfActions } = props;
 
     return (
         <Dropdown>
@@ -32,31 +32,19 @@ const DropdownAction = (props: PropTypes) => {
                 </Button>
             </DropdownTrigger>
             <DropdownMenu>
-                {actionType === "detail" ? (
+                {listOfActions.map((loa) => (
                     <DropdownItem
-                        key="detail-button"
-                        onPress={onPressButtonDetail}
-                        startContent={<IoInformationCircleOutline />}
+                        key={`${loa.name}-button`}
+                        onPress={loa.action}
+                        startContent={loa.startContent}
+                        className={cn("capitalize gap-1", {
+                            "text-danger":
+                                loa.name === "delete" || loa.name === "cancel",
+                        })}
                     >
-                        Detail
+                        {loa.name}
                     </DropdownItem>
-                ) : (
-                    <DropdownItem
-                        key="update-button"
-                        onPress={onPressButtonUpdate}
-                        startContent={<LuPencilLine />}
-                    >
-                        Update
-                    </DropdownItem>
-                )}
-                <DropdownItem
-                    key="delete-button"
-                    className="text-red-500"
-                    startContent={<IoTrashOutline />}
-                    onPress={onPressButtonDelete}
-                >
-                    Delete
-                </DropdownItem>
+                ))}
             </DropdownMenu>
         </Dropdown>
     );
