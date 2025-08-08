@@ -16,8 +16,6 @@ import {
 import { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import useUpdateTicketModal from "./useUpdateTicketModal";
-import { IEvent } from "@/types/Event";
-import { ITicket } from "@/types/Ticket";
 
 interface PropTypes {
     isOpen: boolean;
@@ -150,7 +148,7 @@ const UpdateTicketModal = (props: PropTypes) => {
                                 />
                             </Skeleton>
 
-                            <Skeleton isLoaded={!!dataTicket?.quantity}>
+                            <Skeleton isLoaded={dataTicket?.quantity !== undefined}>
                                 <Controller
                                     name="quantity"
                                     control={control}
