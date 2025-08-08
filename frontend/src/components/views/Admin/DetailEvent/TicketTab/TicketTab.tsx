@@ -14,6 +14,8 @@ import AddTicketModal from "./AddTicketModal";
 import UpdateTicketModal from "./UpdateTicketModal";
 import DeleteTicketModal from "./DeleteTicketModal";
 import { convertToIDR } from "@/utils/currency";
+import { LuPencilLine } from "react-icons/lu";
+import { IoTrashOutline } from "react-icons/io5";
 
 const TicketTab = () => {
     const {
@@ -33,22 +35,31 @@ const TicketTab = () => {
         (ticket: Record<string, unknown>, columnKey: Key) => {
             const cellValue = ticket[columnKey as keyof typeof ticket];
 
+            const listOfActions = [
+                {
+                    name: "edit",
+                    startContent: <LuPencilLine className="text-medium" />,
+                    action: () => {
+                        setSelectedId(`${ticket._id}`);
+                        updateTicketModal.onOpen();
+                    },
+                },
+                {
+                    name: "delete",
+                    startContent: <IoTrashOutline className="text-medium" />,
+                    action: () => {
+                        setSelectedId(`${ticket._id}`);
+                        deleteTicketModal.onOpen();
+                    },
+                },
+            ];
+
             switch (columnKey) {
                 case "price":
                     return `${convertToIDR(cellValue as number)}`;
                 case "actions":
                     return (
-                        <DropdownAction
-                            onPressButtonUpdate={() => {
-                                setSelectedId(`${ticket._id}`);
-                                updateTicketModal.onOpen();
-                            }}
-                            onPressButtonDelete={() => {
-                                setSelectedId(`${ticket._id}`);
-                                deleteTicketModal.onOpen();
-                            }}
-                            actionType="update"
-                        />
+                        <DropdownAction listOfActions={listOfActions ?? []} />
                     );
                 default:
                     return cellValue as ReactNode;
