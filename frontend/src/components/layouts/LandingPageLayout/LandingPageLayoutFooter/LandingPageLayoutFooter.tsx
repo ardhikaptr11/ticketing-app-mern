@@ -4,6 +4,8 @@ import React from "react";
 import { NAV_ITEMS, SOCIAL_ITEMS } from "../LandingPageLayout.constants";
 
 const LandingPageLayoutFooter = () => {
+    const currentYear = new Date().getFullYear();
+    
     return (
         <div className="flex flex-col items-center justify-between bg-slate-900 px-6 py-10 text-center lg:flex-row lg:text-left xl:p-20">
             <Image
@@ -61,7 +63,7 @@ const LandingPageLayoutFooter = () => {
                     ))}
                 </div>
                 <p className="text-gray-600">
-                    &copy; {new Date().getFullYear()} Zentix. All rights reserved.
+                    &copy; {currentYear} Zentix. All rights reserved.
                 </p>
             </div>
         </div>
