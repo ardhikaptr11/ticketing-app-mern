@@ -13,7 +13,6 @@ import {
 import { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import useAddTicketModal from "./useAddTicketModal";
-import { ITicket } from "@/types/Ticket";
 
 interface PropTypes {
     isOpen: boolean;
