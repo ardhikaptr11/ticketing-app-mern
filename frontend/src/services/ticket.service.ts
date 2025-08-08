@@ -10,7 +10,7 @@ const ticketServices = {
     updateTicket: (id: string, payload: ITicket) =>
         instance.put(`${endpoint.TICKET}/${id}`, payload),
     deleteTicket: (id: string) => instance.delete(`${endpoint.TICKET}/${id}`),
-    getTicketByEvent: (eventId: string) =>
+    getTicketsByEventId: (eventId: string) =>
         instance.get(`${endpoint.TICKET}/${eventId}/events`),
 };
 
