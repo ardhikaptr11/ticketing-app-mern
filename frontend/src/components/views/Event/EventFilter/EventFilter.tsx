@@ -1,19 +1,19 @@
 import React, { Fragment, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import useEventFilter from "./useEventFilter";
-import {
-    Autocomplete,
-    AutocompleteItem,
-    Select,
-    SelectItem,
-    Skeleton,
-} from "@heroui/react";
+import { Autocomplete, AutocompleteItem, Skeleton } from "@heroui/react";
 import { ICategory } from "@/types/Category";
 import useChangeURL from "@/hooks/useChangeURL";
+import { useRouter } from "next/router";
 
 const EventFilter = () => {
     const { dataCategory, control, isSuccessGetCategory, setValue } =
         useEventFilter();
+
+    const {
+        query: { reset },
+    } = useRouter();
+
     const {
         currentCategory,
         currentIsFeatured,
@@ -30,6 +30,14 @@ const EventFilter = () => {
         if (currentIsOnline !== "") setValue("isOnline", `${currentIsOnline}`);
     }, [isSuccessGetCategory]);
 
+    useEffect(() => {
+        if (reset === "true") {
+            setValue("category", "");
+            setValue("isFeatured", "");
+            setValue("isOnline", "");
+        }
+    }, [reset]);
+
     const featuredStatus = [
         { label: "Featured", key: "true" },
         { label: "Not Featured", key: "false" },
@@ -41,7 +49,7 @@ const EventFilter = () => {
     ];
 
     return (
-        <div className="h-fit w-full rounded-xl border p-4 lg:sticky lg:top-20 lg:w-80">
+        <aside className="h-fit w-full rounded-xl border p-4 lg:sticky lg:top-20 lg:w-80">
             <h4 className="text-xl font-semibold">Filter</h4>
             <div className="mt-4 flex flex-col gap-4">
                 {isSuccessGetCategory ? (
@@ -51,8 +59,11 @@ const EventFilter = () => {
                             control={control}
                             render={({ field: { onChange, ...field } }) => (
                                 <Autocomplete
+                                    key={`${currentCategory}`}
                                     {...field}
-                                    defaultSelectedKey={`${currentCategory}`}
+                                    defaultSelectedKey={
+                                        `${currentCategory}` || undefined
+                                    }
                                     aria-label="Category selection"
                                     size="md"
                                     defaultItems={dataCategory?.data.data || []}
@@ -83,8 +94,11 @@ const EventFilter = () => {
                             control={control}
                             render={({ field: { onChange, ...field } }) => (
                                 <Autocomplete
+                                    key={`${currentIsFeatured}`}
                                     {...field}
-                                    defaultSelectedKey={`${currentIsFeatured}`}
+                                    defaultSelectedKey={
+                                        `${currentIsFeatured}` || undefined
+                                    }
                                     aria-label="Featured status selection"
                                     size="md"
                                     defaultItems={featuredStatus}
@@ -115,8 +129,11 @@ const EventFilter = () => {
                             control={control}
                             render={({ field: { onChange, ...field } }) => (
                                 <Autocomplete
+                                    key={`${currentIsOnline}`}
                                     {...field}
-                                    defaultSelectedKey={`${currentIsOnline}`}
+                                    defaultSelectedKey={
+                                        `${currentIsOnline}` || undefined
+                                    }
                                     aria-label="Event type selection"
                                     size="md"
                                     defaultItems={eventType}
@@ -142,32 +159,6 @@ const EventFilter = () => {
                                 </Autocomplete>
                             )}
                         />
-                        {/* <Controller
-                            name="isOnline"
-                            control={control}
-                            render={({ field: { onChange, ...field } }) => (
-                                <Select
-                                    {...field}
-                                    defaultSelectedKeys={[`${currentIsOnline}`]}
-                                    label="Event Type"
-                                    labelPlacement="outside"
-                                    placeholder="Online / Offline"
-                                    variant="bordered"
-                                    selectionMode="single"
-                                    onChange={(e) =>
-                                        handleChangeIsOnline(e.target.value)
-                                    }
-                                    disallowEmptySelection
-                                >
-                                    <SelectItem key="true" textValue="Online">
-                                        Online
-                                    </SelectItem>
-                                    <SelectItem key="false" textValue="Offline">
-                                        Offline
-                                    </SelectItem>
-                                </Select>
-                            )}
-                        /> */}
                     </Fragment>
                 ) : (
                     <Fragment>
@@ -180,7 +171,7 @@ const EventFilter = () => {
                     </Fragment>
                 )}
             </div>
-        </div>
+        </aside>
     );
 };
 
