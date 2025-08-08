@@ -8,7 +8,7 @@ const headers = {
 };
 
 const instance = axios.create({
-    baseURL: environment.API_URL,
+    baseURL: environment.API_URL ?? "http://localhost:8765/api",
     headers,
     timeout: 60 * 1000,
 });
