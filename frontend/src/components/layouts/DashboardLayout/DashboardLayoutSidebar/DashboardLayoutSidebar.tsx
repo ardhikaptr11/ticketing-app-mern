@@ -57,7 +57,13 @@ const DashboardLayoutSidebar = (props: PropTypes) => {
                             textValue={item.label}
                             className={cn("my-1 h-12 text-2xl", {
                                 "bg-danger-500 text-white":
-                                    router.pathname.startsWith(item.href),
+                                    item.href.startsWith("/admin")
+                                        ? router.asPath.startsWith(
+                                              `/admin/${item.key}`,
+                                          )
+                                        : router.asPath.startsWith(
+                                              `/member/${item.key}`,
+                                          ),
                             })}
                             aria-label="Sidebar Item"
                             as={SafeLink}
