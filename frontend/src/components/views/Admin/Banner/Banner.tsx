@@ -2,15 +2,25 @@ import DataTable from "@/components/ui/DataTable";
 import { Chip, useDisclosure } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Key, ReactNode, useCallback } from "react";
+import { Key, ReactNode, useCallback, useEffect } from "react";
 import { COLUMN_LIST_BANNER } from "./Banner.constants";
 import { useBanner } from "./useBanner";
 import AddBannerModal from "./AddBannerModal";
 import DeleteBannerModal from "./DeleteBannerModal";
 import DropdownAction from "@/components/commons/DropdownAction";
+import {
+    ALLOWED_LIMITS,
+    LIMIT_DEFAULT,
+    PAGE_DEFAULT,
+} from "@/constants/list.constants";
+import useChangeURL from "@/hooks/useChangeURL";
+import { IoTrashOutline } from "react-icons/io5";
+import { RiInformationLine } from "react-icons/ri";
 
 const Banner = () => {
-    const { push, query } = useRouter();
+    const { isReady, push, query, replace } = useRouter();
+    const { setUrl, currentLimit, currentSearch } = useChangeURL();
+
     const {
         dataBanners,
         isLoadingBanners,
@@ -22,12 +32,46 @@ const Banner = () => {
         setSelectedImage,
     } = useBanner();
 
+    useEffect(() => {
+        if (isReady) {
+            if (!ALLOWED_LIMITS.includes(currentLimit as string)) {
+                replace({
+                    query: {
+                        limit: LIMIT_DEFAULT,
+                        page: PAGE_DEFAULT,
+                        search: currentSearch || "",
+                    },
+                });
+                return;
+            }
+
+            setUrl();
+        }
+    }, [isReady]);
+
     const addBannerModal = useDisclosure();
     const deleteBannerModal = useDisclosure();
 
     const renderCell = useCallback(
         (banner: Record<string, unknown>, columnKey: Key) => {
             const cellValue = banner[columnKey as keyof typeof banner];
+
+            const listOfActions = [
+                {
+                    name: "detail",
+                    startContent: <RiInformationLine className="text-medium" />,
+                    action: () => push(`/admin/banner/${banner._id}`),
+                },
+                {
+                    name: "delete",
+                    startContent: <IoTrashOutline className="text-medium" />,
+                    action: () => {
+                        setSelectedId(`${banner._id}`);
+                        setSelectedImage(`${banner.image}`);
+                        deleteBannerModal.onOpen();
+                    },
+                },
+            ];
 
             switch (columnKey) {
                 case "image":
@@ -52,14 +96,7 @@ const Banner = () => {
                 case "actions":
                     return (
                         <DropdownAction
-                            onPressButtonDetail={() =>
-                                push(`/admin/banner/${banner._id}`)
-                            }
-                            onPressButtonDelete={() => {
-                                setSelectedId(`${banner._id}`);
-                                setSelectedImage(`${banner.image}`);
-                                deleteBannerModal.onOpen();
-                            }}
+                            listOfActions={listOfActions ?? []}
                         />
                     );
                 default:
