@@ -48,7 +48,6 @@ const useLogin = () => {
         handleSubmit,
         formState: { errors },
         reset,
-        setError,
     } = useForm({
         resolver: yupResolver(loginSchema),
         defaultValues: {
