@@ -7,7 +7,7 @@ export default (roles: string[]) => {
 		const role = req.user?.role;
 
 		if (!role || !roles.includes(role)) {
-			return response.authError(res, 403, "Forbidden")
+			return response.authError(res, 403, "Unauthorized role access");
 		}
 
         next()
