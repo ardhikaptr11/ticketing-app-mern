@@ -14,6 +14,8 @@ import {
     PAGE_DEFAULT,
 } from "@/constants/list.constants";
 import useChangeURL from "@/hooks/useChangeURL";
+import { IoInformationCircleOutline, IoTrashOutline } from "react-icons/io5";
+import { RiInformationLine } from "react-icons/ri";
 
 const Category = () => {
     const { isReady, push, query, replace } = useRouter();
@@ -54,6 +56,25 @@ const Category = () => {
         (category: Record<string, unknown>, columnKey: Key) => {
             const cellValue = category[columnKey as keyof typeof category];
 
+            const listOfActions = [
+                {
+                    name: "detail",
+                    startContent: (
+                        <RiInformationLine className="text-medium" />
+                    ),
+                    action: () => push(`/admin/category/${category._id}`),
+                },
+                {
+                    name: "delete",
+                    startContent: <IoTrashOutline className="text-medium" />,
+                    action: () => {
+                        setSelectedId(`${category._id}`);
+                        setSelectedIcon(`${category.icon}`);
+                        deleteCategoryModal.onOpen();
+                    },
+                },
+            ];
+
             switch (columnKey) {
                 case "icon":
                     return (
@@ -66,16 +87,7 @@ const Category = () => {
                     );
                 case "actions":
                     return (
-                        <DropdownAction
-                            onPressButtonDetail={() =>
-                                push(`/admin/category/${category._id}`)
-                            }
-                            onPressButtonDelete={() => {
-                                setSelectedId(`${category._id}`);
-                                setSelectedIcon(`${category.icon}`);
-                                deleteCategoryModal.onOpen();
-                            }}
-                        />
+                        <DropdownAction listOfActions={listOfActions ?? []} />
                     );
                 default:
                     return cellValue as ReactNode;
