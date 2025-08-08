@@ -11,8 +11,7 @@ import categoryServices from "@/services/category.service";
 
 const useHome = () => {
     const getBanners = async () => {
-        const params = `page=${PAGE_DEFAULT}&limit=${LIMIT_BANNERS}`;
-        // const params = `page=${PAGE_DEFAULT}&limit=${LIMIT_BANNERS}&isShow=true`;
+        const params = `page=${PAGE_DEFAULT}&limit=${LIMIT_BANNERS}&isShow=true`;
 
         const res = await bannerServices.getBanners(params);
         const { data } = res;
