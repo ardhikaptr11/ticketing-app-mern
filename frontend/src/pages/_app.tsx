@@ -7,9 +7,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppShell from "@/components/commons/AppShell";
 import { ToasterProvider } from "@/contexts/ToasterContext";
 import { onErrorHandler } from "@/libs/axios/responseHandler";
-import { ModalProvider } from "@/contexts/ModalContext";
-import { SessionExpiredModalListener } from "@/components/ui/SessionExpiredModal/SessionExpiredModal";
-
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -32,14 +29,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
         <SessionProvider session={session}>
             <QueryClientProvider client={queryClient}>
                 <HeroUIProvider>
-                    <ModalProvider>
-                        <SessionExpiredModalListener />
-                        <ToasterProvider>
-                            <AppShell>
-                                <Component {...pageProps} />
-                            </AppShell>
-                        </ToasterProvider>
-                    </ModalProvider>
+                    <ToasterProvider>
+                        <AppShell>
+                            <Component {...pageProps} />
+                        </AppShell>
+                    </ToasterProvider>
                 </HeroUIProvider>
             </QueryClientProvider>
         </SessionProvider>
