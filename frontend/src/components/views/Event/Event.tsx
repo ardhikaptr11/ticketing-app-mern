@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import useEvent from "./useEvent";
 import DisplayCard from "@/components/ui/DisplayCard";
 import { sortEventsByCreationDate } from "@/utils/sort";
@@ -12,6 +12,8 @@ import {
     PAGE_DEFAULT,
 } from "@/constants/list.constants";
 import EventFilter from "./EventFilter";
+import Image from "next/image";
+import cn from "@/utils/cn";
 
 const Event = () => {
     const { dataEvents, isLoadingEvents, isRefetchingEvents } = useEvent();
@@ -47,30 +49,52 @@ const Event = () => {
     return (
         <div className="flex w-full flex-col justify-center gap-6 px-4 lg:flex-row lg:px-0">
             <EventFilter />
-            <div className="min-h-[70vh] w-fit flex-1">
-                <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {!isLoadingEvents && !isRefetchingEvents
-                        ? sortEventsByCreationDate(dataEvents?.data).map(
-                              (event: IEvent) => (
-                                  <DisplayCard
-                                      key={`card-event-${event._id}`}
-                                      type="event"
-                                      data={event}
-                                  />
-                              ),
-                          )
-                        : Array.from({ length: 3 }).map((_, index) => (
-                              <DisplayCard
-                                  key={`card-event-skeleton-${index}`}
-                                  type="event"
-                                  isLoading={
-                                      isLoadingEvents || isRefetchingEvents
-                                  }
-                              />
-                          ))}
-                </div>
-                {!isLoadingEvents && dataEvents?.data.length > 0 && (
-                    <EventFooter totalPages={dataEvents?.totalPages} />
+            <div
+                className={cn(
+                    "min-h-[70vh] flex-1",
+                    dataEvents?.data.length === 0
+                        ? "flex w-full flex-col justify-center lg:flex-row"
+                        : "w-fit",
+                )}
+            >
+                {dataEvents?.data.length === 0 ? (
+                    <div className="flex h-full items-center justify-center">
+                        <Image
+                            src="/images/illustrations/not-found.jpg"
+                            width={500}
+                            height={300}
+                            alt="Event not found"
+                            className="opacity-50"
+                        />
+                    </div>
+                ) : (
+                    <Fragment>
+                        <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {!isLoadingEvents && !isRefetchingEvents
+                                ? sortEventsByCreationDate(
+                                      dataEvents?.data,
+                                  ).map((event: IEvent) => (
+                                      <DisplayCard
+                                          key={`card-event-${event._id}`}
+                                          type="event"
+                                          data={event}
+                                      />
+                                  ))
+                                : Array.from({ length: 3 }).map((_, index) => (
+                                      <DisplayCard
+                                          key={`card-event-skeleton-${index}`}
+                                          type="event"
+                                          isLoading={
+                                              isLoadingEvents ||
+                                              isRefetchingEvents
+                                          }
+                                      />
+                                  ))}
+                        </div>
+                        {!isLoadingEvents && dataEvents?.data.length > 0 && (
+                            <EventFooter totalPages={dataEvents?.totalPages} />
+                        )}
+                    </Fragment>
                 )}
             </div>
         </div>
