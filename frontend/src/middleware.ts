@@ -69,6 +69,10 @@ export async function middleware(request: NextRequest) {
             );
         }
     }
+
+    if (pathname.startsWith("/payment")) {
+        if (!token) return NextResponse.redirect(new URL("/", request.url));
+    }
 }
 
 export const config = {
@@ -78,5 +82,6 @@ export const config = {
         "/auth/:path*",
         "/admin/:path*",
         "/member/:path*",
+        "/payment/:path*",
     ],
 };
