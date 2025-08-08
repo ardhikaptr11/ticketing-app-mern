@@ -15,9 +15,6 @@ const useEventFilter = () => {
     const {
         control,
         formState: { errors },
-        reset,
-        watch,
-        getValues,
         setValue,
     } = useForm({
         resolver: yupResolver(filterEventSchema),
