@@ -18,7 +18,7 @@ const HomeEventList = (props: PropTypes) => {
         <section>
             <div className="mb-2 flex items-center justify-between px-6 lg:px-0">
                 <h2 className="text-2xl font-bold text-danger">{title}</h2>
-                <div className="group flex items-center gap-2">
+                <div className="group flex cursor-pointer items-center gap-2">
                     <Link
                         {...(title.toLowerCase().includes("featured")
                             ? { href: "/events?isFeatured=true" }
