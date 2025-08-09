@@ -208,10 +208,11 @@ const AddEventModal = (props: PropTypes) => {
                                             content={
                                                 <div className="max-w-[250px] p-2">
                                                     <p className="text-tiny">
-                                                        If you don't know when
-                                                        to end the event, just
-                                                        set it as 23.59 and we will
-                                                        show it as "until end"
+                                                        If you don&apos;t know
+                                                        when to end the event,
+                                                        just set it as 23.59 and
+                                                        we will show it as
+                                                        &quot;until end&quot;
                                                     </p>
                                                 </div>
                                             }
