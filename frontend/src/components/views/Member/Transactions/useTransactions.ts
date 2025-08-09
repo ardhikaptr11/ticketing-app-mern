@@ -17,12 +17,10 @@ const useTransactions = () => {
         switch (status) {
             case "completed":
                 return "success";
-            case "pending":
-                return "warning";
             case "cancelled":
                 return "danger";
             default:
-                break;
+                return "warning";
         }
     };
 
