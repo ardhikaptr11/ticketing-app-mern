@@ -7,9 +7,8 @@ import {
     ModalFooter,
     ModalHeader,
     Spinner,
-    useDraggable,
 } from "@heroui/react";
-import React, { Fragment, RefObject, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import useLoginModal from "./useLoginModal";
 import { Controller } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
