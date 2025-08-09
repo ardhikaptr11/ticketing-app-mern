@@ -119,7 +119,10 @@ const getEventDuration = (startDate: string, endDate: string) => {
     return days === 0
         ? minutes === 0
             ? `${hours} jam`
-            : `${hours} jam ${minutes} menit`
+            : endDateObject.getHours() === 23 &&
+                endDateObject.getMinutes() === 59
+              ? "Hingga selesai"
+              : `${hours} jam ${minutes} menit`
         : `${days} hari`;
 };
 
