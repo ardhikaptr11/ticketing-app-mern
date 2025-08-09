@@ -12,12 +12,28 @@ const config: Config = {
         extend: {
             keyframes: {
                 toasterIn: {
-                    "0%": { opacity: "0", transform: "translateY(-20px)" },
-                    "100%": { opacity: "1", transform: "translateY(0)" },
+                    "0%": {
+                        display: "none",
+                        opacity: "0",
+                        transform: "translateY(-20px)",
+                    },
+                    "100%": {
+                        display: "block",
+                        opacity: "1",
+                        transform: "translateY(0)",
+                    },
                 },
                 toasterOut: {
-                    "0%": { opacity: "1", transform: "translateY(0)" },
-                    "100%": { opacity: "0", transform: "translateY(-20px)" },
+                    "0%": {
+                        display: "block",
+                        opacity: "1",
+                        transform: "translateY(0)",
+                    },
+                    "100%": {
+                        display: "none",
+                        opacity: "0",
+                        transform: "translateY(-20px)",
+                    },
                 },
             },
             animation: {
