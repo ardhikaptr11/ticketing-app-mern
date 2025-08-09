@@ -13,9 +13,9 @@ import { displayEventDateTime } from "@/utils/date";
 import Image from "next/image";
 import DescriptionTab from "./DescriptionTab";
 import TicketTab from "./TicketTab";
-import LoginModal from "./AddEventModal/LoginModal";
 import Script from "next/script";
 import environment from "@/config/environment";
+import LoginModal from "./LoginModal";
 
 const DetailEvent = () => {
     const {
