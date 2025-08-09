@@ -53,7 +53,7 @@ const LandingPageLayoutNavbar = () => {
             maxWidth="full"
             isBordered
             isBlurred={false}
-            classNames={{ wrapper: "p-4" }}
+            classNames={{ wrapper: "px-6" }}
         >
             <div className="flex items-center gap-8">
                 <NavbarBrand as={SafeLink} href="/">
@@ -313,7 +313,9 @@ const LandingPageLayoutNavbar = () => {
                                     },
                                 )}
                             >
-                                <Link href="/member/transactions">Transactions</Link>
+                                <Link href="/member/transactions">
+                                    Transactions
+                                </Link>
                             </NavbarMenuItem>
                             <NavbarMenuItem
                                 className={cn(
