@@ -58,13 +58,12 @@ const Event = () => {
                 )}
             >
                 {dataEvents?.data.length === 0 ? (
-                    <div className="flex h-full items-center justify-center">
+                    <div className="flex h-full items-center justify-center opacity-50">
                         <Image
-                            src="/images/illustrations/not-found.jpg"
+                            src="/images/illustrations/not-found.png"
                             width={500}
                             height={300}
                             alt="Event not found"
-                            className="opacity-50"
                         />
                     </div>
                 ) : (
