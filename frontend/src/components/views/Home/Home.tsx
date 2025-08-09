@@ -33,7 +33,7 @@ const Home = () => {
                 className="mx-6 mb-6 h-fit rounded-2xl lg:mx-0"
             >
                 <Image
-                    src="https://res.cloudinary.com/dryfiuvhw/image/upload/v1753281372/zentix-uploads/lcqiloahiokbnkyansst.jpg"
+                    src="https://res.cloudinary.com/dryfiuvhw/image/upload/v1754715432/zentix-uploads/au1jmnhcnhlzgtvuwxgf.jpg"
                     alt="Front page banner"
                     width={1920}
                     height={800}
