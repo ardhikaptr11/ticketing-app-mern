@@ -6,5 +6,6 @@ export const onErrorHandler = (error: Error) => {
     const { response } = error as AxiosError;
     const data = response?.data as ErrorResponseData;
 
-    if (response && data?.data?.name === "TokenExpiredError") signOut();
+    if (response && data?.data?.name === "TokenExpiredError")
+        signOut({ redirect: false, callbackUrl: "/auth/login" });
 };
