@@ -5,7 +5,7 @@ import { ICart, ITicket } from "@/types/Ticket";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import QRCode from "qrcode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useDetailTransaction = () => {
     const {
@@ -13,6 +13,7 @@ const useDetailTransaction = () => {
         query: { id },
     } = useRouter();
 
+    const [dataCategories, setDataCategories] = useState<string[]>([]);
     const [qrCode, setQrCode] = useState<string | null>(null);
 
     const opts = {
@@ -33,6 +34,17 @@ const useDetailTransaction = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchQR = async () => {
+            const dataUrl = await generateQR(
+                "https://zentix-kappa.vercel.app/",
+            );
+            if (dataUrl) setQrCode(dataUrl);
+        };
+
+        fetchQR();
+    }, []);
+
     const getOrderById = async () => {
         const { data } = await orderServices.getOrderById(`${id}`);
 
@@ -40,9 +52,9 @@ const useDetailTransaction = () => {
     };
 
     const { data: dataTransaction } = useQuery({
-        queryKey: ["Transaction"],
+        queryKey: ["Transaction", id],
         queryFn: getOrderById,
-        enabled: isReady,
+        enabled: isReady && !!id,
     });
 
     const getEventById = async () => {
@@ -54,26 +66,27 @@ const useDetailTransaction = () => {
     };
 
     const { data: dataEvent } = useQuery({
-        queryKey: ["EventById"],
+        queryKey: ["EventById", dataTransaction?.event],
         queryFn: getEventById,
         enabled: !!dataTransaction?.event,
     });
 
     const getTicketById = async () => {
-        const dataTickets: ITicket[] = [];
+        const tickets: ITicket[] = [];
 
         for (const cart of dataTransaction?.tickets || []) {
             const { data } = await ticketServices.getTicketById(cart.ticket);
-            dataTickets.push(data.data);
+            tickets.push(data.data);
         }
 
-        return dataTickets;
+        return tickets;
     };
 
     const { data: dataTickets, isLoading: isLoadingDataTickets } = useQuery({
         queryKey: ["Tickets"],
         queryFn: getTicketById,
-        enabled: !!dataTransaction?.tickets?.[0].ticket,
+        enabled:
+            !!dataTransaction?.tickets && dataTransaction.tickets.length > 0,
     });
 
     const getAllCategories = async (tickets: ICart[]) => {
@@ -83,7 +96,7 @@ const useDetailTransaction = () => {
             const { data } = await ticketServices.getTicketById(
                 `${ticket.ticket}`,
             );
-            const {name } = data.data;
+            const { name } = data.data;
 
             for (let i = 0; i < ticket.quantity; i++) {
                 categories.push(name);
@@ -93,14 +106,24 @@ const useDetailTransaction = () => {
         return categories;
     };
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            if (!dataTransaction?.tickets?.length) return;
+
+            const categories = await getAllCategories(dataTransaction.tickets);
+            setDataCategories(categories);
+        };
+
+        fetchCategories();
+    }, [dataTransaction?.tickets]);
+
     return {
-        dataTransaction,
+        dataCategories,
         dataEvent,
         dataTickets,
-        generateQR,
+        dataTransaction,
         getAllCategories,
         isLoadingDataTickets,
-        setQrCode,
         qrCode,
     };
 };
