@@ -1,6 +1,5 @@
 import DataTable from "@/components/ui/DataTable";
 import { Chip, useDisclosure } from "@heroui/react";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { Key, ReactNode, useCallback, useEffect } from "react";
 import { COLUMN_LIST_TRANSACTIONS } from "./Transactions.constants";
@@ -71,7 +70,20 @@ const Transactions = () => {
                             push(`/member/transactions/${data.orderId}`),
                     },
                 ];
-            case "pending":
+            case "cancelled":
+                return [
+                    {
+                        name: "delete",
+                        startContent: (
+                            <IoTrashOutline className="text-medium" />
+                        ),
+                        action: () => {
+                            setSelectedId(`${data.orderId}`);
+                            deleteTransactionModal.onOpen();
+                        },
+                    },
+                ];
+            default:
                 return [
                     {
                         name: "pay",
@@ -92,19 +104,6 @@ const Transactions = () => {
                             ),
                     },
                 ];
-            case "cancelled":
-                return [
-                    {
-                        name: "delete",
-                        startContent: (
-                            <IoTrashOutline className="text-medium" />
-                        ),
-                        action: () => {
-                            setSelectedId(`${data.orderId}`);
-                            deleteTransactionModal.onOpen();
-                        },
-                    },
-                ];
         }
     };
 
@@ -112,12 +111,10 @@ const Transactions = () => {
         switch (status) {
             case "completed":
                 return <FaRegCircleCheck />;
-            case "pending":
-                return <FaRegClock />;
             case "cancelled":
                 return <FaRegCircleXmark />;
             default:
-                break;
+                return <FaRegClock />;
         }
     };
 
@@ -142,7 +139,9 @@ const Transactions = () => {
                                 cellValue as string,
                             )}
                         >
-                            {cellValue as string}
+                            {cellValue === "pending" || cellValue === undefined
+                                ? "Pending"
+                                : (cellValue as string)}
                         </Chip>
                     );
                 case "actions":
