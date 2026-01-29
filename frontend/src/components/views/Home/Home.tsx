@@ -4,6 +4,7 @@ import HomeSlider from "./HomeSlider";
 import useHome from "./useHome";
 import { Skeleton } from "@heroui/react";
 import HomeCategoryList from "./HomeCategoryList";
+import { IBanner } from "@/types/Banner";
 
 const Home = () => {
     const {
@@ -17,10 +18,16 @@ const Home = () => {
         isLoadingLatestEvents,
     } = useHome();
 
+    const sortedBanners = dataBanners?.data?.sort((a: IBanner, b: IBanner) =>
+        (b.title as string).localeCompare(a.title as string),
+    );
+
+    const [banner, ...homeSliderBanners] = sortedBanners || [];
+
     return (
         <div>
             <HomeSlider
-                banners={dataBanners?.data}
+                banners={homeSliderBanners}
                 isLoadingBanners={isLoadingBanners}
             />
             <HomeEventList
@@ -33,7 +40,7 @@ const Home = () => {
                 className="mx-6 mb-6 h-fit rounded-2xl lg:mx-0"
             >
                 <Image
-                    src="https://res.cloudinary.com/dryfiuvhw/image/upload/v1754715432/zentix-uploads/au1jmnhcnhlzgtvuwxgf.jpg"
+                    src={banner?.image}
                     alt="Front page banner"
                     width={1920}
                     height={800}
