@@ -1,12 +1,7 @@
 import { ITicket } from "@/types/Ticket";
 import cn from "@/utils/cn";
 import { convertToIDR } from "@/utils/currency";
-import {
-    Accordion,
-    AccordionItem,
-    Button,
-    Chip,
-} from "@heroui/react";
+import { Accordion, AccordionItem, Button, Chip } from "@heroui/react";
 import { Fragment } from "react";
 import { IoCartOutline } from "react-icons/io5";
 
@@ -79,34 +74,41 @@ const TicketTab = (props: PropTypes) => {
                                     </div>
                                 }
                             >
-                                <div className="flex items-center justify-between">
-                                    <p className="text-gray-700">
-                                        {convertToIDR(ticket?.price as number)}
-                                    </p>
-                                    {ticket?.quantity !== 0 && (
-                                        <Button
-                                            variant="bordered"
-                                            isDisabled={
-                                                isAddedToCart[`${ticket._id}`]
-                                            }
-                                            color="warning"
-                                            size="sm"
-                                            className="flex items-center justify-center gap-2"
-                                            onPress={() => {
-                                                handleAddToCart(
-                                                    `${ticket._id}`,
-                                                );
-                                            }}
-                                        >
-                                            <IoCartOutline className="text-lg" />
-                                            <p className="font-bold">
-                                                Add{" "}
-                                                <span className="hidden lg:inline-block">
-                                                    To Cart
-                                                </span>
-                                            </p>
-                                        </Button>
-                                    )}
+                                <div className="flex flex-col gap-2">
+                                    <p>{ticket?.description}</p>
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-gray-700">
+                                            {convertToIDR(
+                                                ticket?.price as number,
+                                            )}
+                                        </p>
+                                        {ticket?.quantity !== 0 && (
+                                            <Button
+                                                variant="bordered"
+                                                isDisabled={
+                                                    isAddedToCart[
+                                                        `${ticket._id}`
+                                                    ]
+                                                }
+                                                color="warning"
+                                                size="sm"
+                                                className="flex items-center justify-center gap-2"
+                                                onPress={() => {
+                                                    handleAddToCart(
+                                                        `${ticket._id}`,
+                                                    );
+                                                }}
+                                            >
+                                                <IoCartOutline className="text-lg" />
+                                                <p className="font-bold">
+                                                    Add{" "}
+                                                    <span className="hidden lg:inline-block">
+                                                        To Cart
+                                                    </span>
+                                                </p>
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             </AccordionItem>
                         </Accordion>

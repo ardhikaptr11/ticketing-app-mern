@@ -22,6 +22,8 @@ const LandingPageLayoutFooter = () => {
                         <Link href="mailto:support@zentix.com">
                             support@zentix.com
                         </Link>
+                    </p>
+                    <p className="text-gray-600">
                         <Link href="tel:+6281234567890">+62 812-3456-7890</Link>
                     </p>
                 </div>

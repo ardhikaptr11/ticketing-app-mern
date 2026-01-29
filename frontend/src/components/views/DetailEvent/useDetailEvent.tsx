@@ -30,9 +30,9 @@ const useDetailEvent = () => {
     };
 
     const { data: dataEvent } = useQuery({
-        queryKey: ["EventBySlug"],
+        queryKey: ["EventBySlug", slug],
         queryFn: getEventBySlug,
-        enabled: isReady,
+        enabled: isReady && !!slug,
     });
 
     const getEventTicket = async () => {
