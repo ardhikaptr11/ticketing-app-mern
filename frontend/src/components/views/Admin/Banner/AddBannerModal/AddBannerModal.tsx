@@ -10,10 +10,11 @@ import {
     SelectItem,
     Spinner,
 } from "@heroui/react";
-import React, { useEffect } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import useAddBannerModal from "./useAddBannerModal";
 import { Controller } from "react-hook-form";
 import InputFile from "@/components/ui/InputFile";
+import { useDraggable } from "@/hooks/useDraggable";
 
 interface PropTypes {
     isOpen: boolean;
@@ -24,6 +25,9 @@ interface PropTypes {
 
 const AddBannerModal = (props: PropTypes) => {
     const { isOpen, onClose, onOpenChange, refetchBanners } = props;
+
+        const targetRef = useRef<HTMLElement>(null) as RefObject<HTMLElement>;
+        const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
 
     const {
         control,
@@ -59,10 +63,11 @@ const AddBannerModal = (props: PropTypes) => {
             placement="center"
             scrollBehavior="inside"
             onClose={() => handleOnClose(onClose)}
+            ref={targetRef}
         >
             <form onSubmit={handleSubmitForm(handleAddBanner)}>
                 <ModalContent className="m-4">
-                    <ModalHeader>Add New Banner</ModalHeader>
+                    <ModalHeader {...moveProps}>Add New Banner</ModalHeader>
                     <ModalBody>
                         <div className="flex flex-col gap-2">
                             <p className="text-sm font-bold">Information</p>

@@ -8,12 +8,12 @@ import {
     ModalHeader,
     Spinner,
     Textarea,
-    useDraggable,
 } from "@heroui/react";
 import React, { RefObject, useEffect, useRef } from "react";
 import useAddCategoryModal from "./useAddCategoryModal";
 import { Controller } from "react-hook-form";
 import InputFile from "@/components/ui/InputFile";
+import { useDraggable } from "@/hooks/useDraggable";
 
 interface PropTypes {
     isOpen: boolean;

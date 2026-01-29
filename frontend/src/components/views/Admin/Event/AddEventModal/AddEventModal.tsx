@@ -14,7 +14,6 @@ import {
     Spinner,
     Textarea,
     Tooltip,
-    useDraggable,
 } from "@heroui/react";
 import React, { Fragment, RefObject, useEffect, useRef, useState } from "react";
 import useAddEventModal from "./useAddEventModal";
@@ -25,6 +24,7 @@ import { I18nProvider } from "@react-aria/i18n";
 import { IRegency } from "@/types/Event";
 import { currentDate } from "@/utils/date";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useDraggable } from "@/hooks/useDraggable";
 
 interface PropTypes {
     isOpen: boolean;
